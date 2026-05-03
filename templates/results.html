@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Your Results — EarlyDetect{% endblock %}
+
+{% block extra_head %}
+<style>
+  .results-header { text-align: center; padding: 2rem 0; }
+  .overall-badge {
+    display: inline-block; padding: 0.4rem 1.2rem;
+    border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .badge-low      { background: rgba(63,185,80,0.15);  color: var(--accent); }
+  .badge-moderate { background: rgba(240,136,62,0.15); color: var(--warn); }
+  .badge-high     { background: rgba(248,81,73,0.15);  color: var(--danger); }
+
+  .disease-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem; margin: 2rem 0;
+  }
+  .disease-card { position: relative; overflow: hidden; }
+  .disease-card .level-bar {
+    height: 4px; border-radius: 2px; margin-bottom: 0.8rem;
+  }
+  .level-low      .level-bar { background: var(--accent); }
+  .level-moderate .level-bar { background: var(--warn); }
+  .level-high     .level-bar { background: var(--danger); }
+
+  .disease-label { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .disease-desc  { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.8rem; }
+  .score-row     { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .score-val     { font-size: 1.4rem; font-weight: 700; }
+  .score-label   { font-size: 0.75rem; color: var(--muted); }
+  .level-badge   { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 600; }
+  .flag-list     { margin-top: 0.6rem; }
+  .flag-item     { font-size: 0.78rem; color: var(--muted); padding: 0.3rem 0; border-top: 1px solid var(--border); }
+  .rec           { font-size: 0.8rem; margin-top: 0.6rem; padding: 0.5rem; background: var(--bg); border-radius: 6px; }
+
+  .cta-box { text-align: center; padding: 2.5rem; margin: 2rem 0; }
+  .cta-box h2 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin-bottom: 0.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<main>
+  <div class="results-header" id="results-header">
+    <p style="color:var(--muted); font-size:0.9rem">Loading your results…</p>
+  </div>
+
+  <div id="disease-grid" class="disease-grid"></div>
+
+  <div class="disclaimer" id="disclaimer"></div>
+
+  <div class="cta-box card" style="margin-top:1.5rem">
+    <h2>Next steps</h2>
+    <p style="color:var(--muted); margin-bottom:1.2rem; font-size:0.9rem">
+      This screening is not a diagnosis. Please share these results with a healthcare professional.
+    </p>
+    <a href="/screening" class="btn btn-secondary" style="margin-right:0.8rem">Retake Screening</a>
+    <button class="btn btn-primary" onclick="window.print()">🖨 Print / Save Report</button>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function levelColor(level) {
+  return { low: '#3fb950', moderate: '#f0883e', high: '#f85149' }[level] || '#8b949e';
+}
+
+function renderResults(profile) {
+  const overall = profile.overall_level;
+  const header  = document.getElementById('results-header');
+  header.innerHTML = `
+    <span class="overall-badge badge-${overall}">Overall Risk: ${overall.toUpperCase()}</span>
+    <h1 style="font-family:'DM Serif Display',serif; font-size:2rem; margin-bottom:0.4rem">Your Screening Report</h1>
+    <p style="color:var(--muted); font-size:0.9rem">
+      ${profile.high_count} high · ${profile.moderate_count} moderate indicators detected
+    </p>
+  `;
+
+  const grid = document.getElementById('disease-grid');
+  grid.innerHTML = profile.disease_risks.map(d => {
+    const color   = levelColor(d.level);
+    const flags   = d.flags.map(f =>
+      `<div class="flag-item">⚠ ${f.message}</div>`
+    ).join('');
+
+    return `
+    <div class="card disease-card level-${d.level}">
+      <div class="level-bar" style="width:${d.score}%"></div>
+      <div class="score-row">
+        <div>
+          <div class="disease-label">${d.label}</div>
+          <div class="disease-desc">${d.description}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="score-val" style="color:${color}">${d.score}</div>
+          <div class="score-label">/ 100</div>
+        </div>
+      </div>
+      <span class="level-badge" style="background:${color}22; color:${color}">
+        ${d.level.charAt(0).toUpperCase()+d.level.slice(1)} Risk
+      </span>
+      ${flags ? `<div class="flag-list">${flags}</div>` : ''}
+      <div class="rec">💡 ${d.recommendation}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('disclaimer').textContent = profile.disclaimer;
+}
+
+// Load from sessionStorage
+const raw = sessionStorage.getItem('riskProfile');
+if (raw) {
+  renderResults(JSON.parse(raw));
+} else {
+  document.getElementById('results-header').innerHTML =
+    '<p style="color:var(--muted)">No results found. <a href="/screening">Take the screening</a> first.</p>';
+}
+</script>
+{% endblock %}

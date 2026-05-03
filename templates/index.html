@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}EarlyDetect — Early Symptom Detection Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+  .hero { text-align: center; padding: 5rem 1rem 3rem; }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    line-height: 1.2; margin-bottom: 1rem;
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero p { color: var(--muted); max-width: 540px; margin: 0 auto 2rem; font-size: 1.05rem; }
+  .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  .modules-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem; margin: 3rem 0;
+  }
+  .module-card { border-left: 3px solid var(--accent2); }
+  .module-card .icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .module-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .module-card p  { font-size: 0.85rem; color: var(--muted); }
+
+  .disease-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+  .tag {
+    padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem;
+    background: rgba(88,166,255,0.12); border: 1px solid rgba(88,166,255,0.3);
+    color: var(--accent2);
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif; font-size: 1.6rem; margin-bottom: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<main>
+  <div class="hero">
+    <h1>Detect <em>early signs</em> of illness<br/>from your smartphone</h1>
+    <p>A multi-modal screening tool using voice, reaction time, and structured questionnaires — no doctor visit required to get started.</p>
+    <div class="hero-cta">
+      <a href="/screening" class="btn btn-primary">▶ Start Screening</a>
+      <a href="#how-it-works" class="btn btn-secondary">How it works</a>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    ⚠️ <strong>Important:</strong> EarlyDetect is a <strong>screening tool only</strong> and does not provide medical diagnoses.
+    Results should always be reviewed by a qualified healthcare professional.
+  </div>
+
+  <br/>
+  <h2 class="section-title" id="how-it-works">How it works</h2>
+  <div class="modules-grid">
+    <div class="card module-card">
+      <div class="icon">🎙️</div>
+      <h3>Voice Analysis</h3>
+      <p>Read a short passage aloud. We analyse pitch, energy, speech rate and pauses for stress and mood markers.</p>
+    </div>
+    <div class="card module-card">
+      <div class="icon">⚡</div>
+      <h3>Reaction Time Test</h3>
+      <p>Tap when you see the target. Speed and consistency reveal neurological and fatigue indicators.</p>
+    </div>
+    <div class="card module-card">
+      <div class="icon">📋</div>
+      <h3>Questionnaire</h3>
+      <p>Answer questions about sleep, mood, lifestyle, and physical symptoms to build a complete picture.</p>
+    </div>
+    <div class="card module-card">
+      <div class="icon">📊</div>
+      <h3>Risk Profile</h3>
+      <p>All signals are combined into a disease-by-disease risk report with personalised guidance.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">Conditions screened</h2>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:0.8rem;">
+    The platform flags early indicators for the following conditions. A flag is <strong>not</strong> a diagnosis.
+  </p>
+  <div class="disease-list">
+    <span class="tag">Depression &amp; Anxiety</span>
+    <span class="tag">Chronic Stress</span>
+    <span class="tag">Parkinson's (early)</span>
+    <span class="tag">Cognitive Decline</span>
+    <span class="tag">Type 2 Diabetes Risk</span>
+    <span class="tag">Hypertension Risk</span>
+    <span class="tag">Insomnia</span>
+    <span class="tag">Sleep Disorders</span>
+  </div>
+</main>
+{% endblock %}
