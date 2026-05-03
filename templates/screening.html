@@ -3,150 +3,123 @@
 
 {% block extra_head %}
 <style>
-  /* ── Progress Bar ─────────────────────────────────────────────── */
-  .progress-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 2rem; position: relative;
-  }
-  .progress-bar::before {
-    content: ''; position: absolute; top: 50%; left: 0; right: 0;
-    height: 2px; background: var(--border); z-index: 0;
-  }
-  .step-dot {
-    width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem; font-weight: 600; z-index: 1;
-    border: 2px solid var(--border); background: var(--bg);
-    transition: all 0.3s;
-  }
-  .step-dot.active   { border-color: var(--accent2); color: var(--accent2); }
-  .step-dot.done     { background: var(--accent); border-color: var(--accent); color: #000; }
-
-  /* ── Step Panels ──────────────────────────────────────────────── */
-  .step-panel { display: none; }
-  .step-panel.active { display: block; animation: fadeIn 0.3s; }
+  .progress-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; position:relative; }
+  .progress-bar::before { content:''; position:absolute; top:50%; left:0; right:0; height:2px; background:var(--border); z-index:0; }
+  .step-dot { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:600; z-index:1; border:2px solid var(--border); background:var(--bg); transition:all 0.3s; }
+  .step-dot.active { border-color:var(--accent2); color:var(--accent2); }
+  .step-dot.done   { background:var(--accent); border-color:var(--accent); color:#000; }
+  .step-panel { display:none; }
+  .step-panel.active { display:block; animation:fadeIn 0.3s; }
   @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-
   .step-title { font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:0.4rem; }
   .step-sub   { color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem; }
-
-  /* ── Questionnaire ────────────────────────────────────────────── */
-  .q-item { margin-bottom: 1.2rem; }
+  .q-item { margin-bottom:1.2rem; }
   .q-item label { display:block; font-size:0.9rem; margin-bottom:0.4rem; }
-  .q-item input[type=number], .q-item select {
-    width: 100%; padding: 0.55rem 0.75rem;
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 8px; color: var(--text); font-size: 0.9rem;
-    font-family: inherit;
-  }
-  .radio-group { display: flex; gap: 0.8rem; }
-  .radio-group label {
-    flex: 1; padding: 0.55rem; text-align: center;
-    border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
-    font-size: 0.85rem; transition: all 0.15s;
-  }
-  .radio-group input[type=radio] { display: none; }
-  .radio-group input:checked + label { border-color: var(--accent2); background: rgba(88,166,255,0.1); color: var(--accent2); }
-
-  /* ── Reaction Time ────────────────────────────────────────────── */
-  #rt-arena {
-    height: 220px; border: 2px dashed var(--border);
-    border-radius: var(--radius); display: flex; align-items: center;
-    justify-content: center; cursor: pointer; user-select: none;
-    transition: background 0.2s; position: relative; overflow: hidden;
-  }
-  #rt-arena.waiting { background: rgba(88,166,255,0.06); }
-  #rt-arena.ready   { background: rgba(63,185,80,0.15); border-color: var(--accent); }
-  #rt-arena p { font-size: 1.1rem; color: var(--muted); pointer-events: none; }
-  #rt-results { margin-top: 1rem; }
-  .rt-trial { display: inline-block; padding: 0.2rem 0.6rem;
-    background: var(--surface); border-radius: 6px; font-size: 0.8rem;
-    margin: 0.2rem; border: 1px solid var(--border); }
-
-  /* ── Voice ────────────────────────────────────────────────────── */
-  #voice-passage {
-    background: var(--surface); border-left: 3px solid var(--accent2);
-    padding: 1rem 1.2rem; border-radius: 8px; font-style: italic;
-    margin-bottom: 1rem; line-height: 1.7; font-size: 0.95rem;
-  }
-  #voice-controls { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
-  #voice-status   { font-size: 0.85rem; color: var(--muted); }
-  .recording-dot  { display: inline-block; width: 8px; height: 8px; background: var(--danger);
-    border-radius: 50%; animation: pulse 1s infinite; margin-right: 4px; }
-  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-  #voice-features { margin-top: 1rem; font-size: 0.82rem; color: var(--muted); }
+  .q-item input[type=number] { width:100%; padding:0.55rem 0.75rem; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.9rem; font-family:inherit; }
+  .radio-group { display:flex; gap:0.8rem; }
+  .radio-group label { flex:1; padding:0.55rem; text-align:center; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.85rem; transition:all 0.15s; }
+  .radio-group input[type=radio] { display:none; }
+  .radio-group input:checked + label { border-color:var(--accent2); background:rgba(88,166,255,0.1); color:var(--accent2); }
+  #rt-arena { height:220px; border:2px dashed var(--border); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; transition:background 0.2s; }
+  #rt-arena.waiting { background:rgba(88,166,255,0.06); }
+  #rt-arena.ready   { background:rgba(63,185,80,0.15); border-color:var(--accent); }
+  #rt-arena p { font-size:1.1rem; color:var(--muted); pointer-events:none; }
+  .rt-trial { display:inline-block; padding:0.2rem 0.6rem; background:var(--surface); border-radius:6px; font-size:0.8rem; margin:0.2rem; border:1px solid var(--border); }
+  #voice-passage { background:var(--surface); border-left:3px solid var(--accent2); padding:1rem 1.2rem; border-radius:8px; font-style:italic; margin-bottom:1rem; line-height:1.7; font-size:0.95rem; }
+  #voice-controls { display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap; }
+  #voice-status { font-size:0.85rem; color:var(--muted); }
+  .recording-dot { display:inline-block; width:8px; height:8px; background:var(--danger); border-radius:50%; animation:pulse 1s infinite; margin-right:4px; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  #voice-features { margin-top:1rem; font-size:0.82rem; color:var(--muted); }
+  #face-upload-area { border:2px dashed var(--border); border-radius:var(--radius); padding:2.5rem; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:1rem; }
+  #face-upload-area:hover { border-color:var(--accent2); background:rgba(88,166,255,0.04); }
+  #face-upload-area .icon { font-size:2.5rem; margin-bottom:0.5rem; }
+  #face-upload-area p { color:var(--muted); font-size:0.9rem; }
+  #face-preview { display:none; margin-top:1rem; text-align:center; }
+  #face-preview img { max-width:280px; max-height:280px; border-radius:var(--radius); border:2px solid var(--border); object-fit:cover; }
+  #face-input { display:none; }
+  #face-status { margin-top:0.8rem; font-size:0.85rem; color:var(--muted); }
+  .emotion-bar-wrap { margin:0.4rem 0; }
+  .emotion-label { display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:2px; }
+  .emotion-bar { height:8px; border-radius:4px; transition:width 0.5s; }
+  .face-info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.6rem; margin-bottom:1rem; }
+  .face-info-card { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem; text-align:center; }
+  .face-info-card .val { font-size:1.1rem; font-weight:700; color:var(--accent2); }
+  .face-info-card .lbl { font-size:0.7rem; color:var(--muted); }
 </style>
 {% endblock %}
 
 {% block content %}
 <main>
   <h1 class="step-title" style="margin-bottom:0.2rem">Health Screening</h1>
-  <p class="step-sub">Complete all three modules to receive your personalised risk profile.</p>
+  <p class="step-sub">Complete all four modules to receive your personalised risk profile.</p>
 
-  <!-- Progress -->
   <div class="progress-bar">
     <div class="step-dot active" id="dot-1">1</div>
-    <div class="step-dot"       id="dot-2">2</div>
-    <div class="step-dot"       id="dot-3">3</div>
-    <div class="step-dot"       id="dot-4">✓</div>
+    <div class="step-dot" id="dot-2">2</div>
+    <div class="step-dot" id="dot-3">3</div>
+    <div class="step-dot" id="dot-4">4</div>
+    <div class="step-dot" id="dot-5">✓</div>
   </div>
 
-  <!-- ── Step 1: Questionnaire ──────────────────────────────────────── -->
+  <!-- Step 1: Questionnaire -->
   <div class="step-panel active card" id="step-1">
     <h2 class="step-title">📋 Health Questionnaire</h2>
     <p class="step-sub">Answer honestly — all data stays on your device until you submit.</p>
-
-    <div id="q-form">
-      <!-- Dynamically rendered by JS from /api questions -->
-      <p style="color:var(--muted)">Loading questions…</p>
-    </div>
-
+    <div id="q-form"><p style="color:var(--muted)">Loading questions…</p></div>
     <br/>
     <div class="disclaimer">This questionnaire screens for risk indicators only and is not a diagnostic tool.</div>
     <br/>
     <button class="btn btn-primary" onclick="submitQuestionnaire()">Next: Reaction Time Test →</button>
   </div>
 
-  <!-- ── Step 2: Reaction Time ─────────────────────────────────────── -->
+  <!-- Step 2: Reaction Time -->
   <div class="step-panel card" id="step-2">
     <h2 class="step-title">⚡ Reaction Time Test</h2>
-    <p class="step-sub">Tap / click the box as soon as it turns green. Complete 8 trials.</p>
-
-    <div id="rt-arena" class="waiting" onclick="rtTap()">
-      <p id="rt-msg">Click here to start</p>
-    </div>
-    <div id="rt-results"></div>
-
+    <p class="step-sub">Tap the box as soon as it turns green. Complete 8 trials.</p>
+    <div id="rt-arena" class="waiting" onclick="rtTap()"><p id="rt-msg">Click here to start</p></div>
+    <div id="rt-results" style="margin-top:1rem"></div>
     <br/>
     <button class="btn btn-secondary" onclick="skipRT()" style="margin-right:0.5rem">Skip this test</button>
     <button class="btn btn-primary" id="rt-next-btn" style="display:none" onclick="goToStep(3)">Next: Voice Analysis →</button>
   </div>
 
-  <!-- ── Step 3: Voice Analysis ────────────────────────────────────── -->
+  <!-- Step 3: Voice -->
   <div class="step-panel card" id="step-3">
     <h2 class="step-title">🎙️ Voice Analysis</h2>
-    <p class="step-sub">Read the passage below aloud in your natural voice. Recording takes ~20 seconds.</p>
-
-    <div id="voice-passage">
-      "The autumn leaves drifted slowly to the ground, each one a quiet reminder of the changing season.
-      I walked through the park, listening to the gentle rustling of the wind through the trees,
-      feeling a calm sense of peace as the cool air brushed against my face."
-    </div>
-
+    <p class="step-sub">Read the passage below aloud in your natural voice.</p>
+    <div id="voice-passage">"The autumn leaves drifted slowly to the ground, each one a quiet reminder of the changing season. I walked through the park, listening to the gentle rustling of the wind through the trees, feeling a calm sense of peace as the cool air brushed against my face."</div>
     <div id="voice-controls">
       <button class="btn btn-primary" id="record-btn" onclick="toggleRecording()">🔴 Start Recording</button>
       <span id="voice-status">Ready when you are.</span>
     </div>
     <div id="voice-features"></div>
-
     <br/>
     <button class="btn btn-secondary" onclick="skipVoice()" style="margin-right:0.5rem">Skip this test</button>
-    <button class="btn btn-primary" id="voice-next-btn" style="display:none" onclick="computeAndShowResults()">View Results →</button>
+    <button class="btn btn-primary" id="voice-next-btn" style="display:none" onclick="goToStep(4)">Next: Facial Analysis →</button>
   </div>
 
-  <!-- ── Step 4: Loading ───────────────────────────────────────────── -->
-  <div class="step-panel card" id="step-4" style="text-align:center; padding:3rem">
-    <div style="font-size:2.5rem; margin-bottom:1rem">⏳</div>
+  <!-- Step 4: Facial Analysis -->
+  <div class="step-panel card" id="step-4">
+    <h2 class="step-title">📸 Facial Expression Analysis</h2>
+    <p class="step-sub">Upload a clear photo of your face in natural lighting. Never stored or shared.</p>
+    <div id="face-upload-area" onclick="document.getElementById('face-input').click()">
+      <div class="icon">🤳</div>
+      <p>Click to upload a photo (JPG or PNG)</p>
+      <p style="font-size:0.8rem;margin-top:0.3rem">Best results: face clearly visible, good lighting</p>
+    </div>
+    <input type="file" id="face-input" accept="image/jpeg,image/png,image/jpg" onchange="handleFaceUpload(event)" />
+    <div id="face-preview"><img id="face-img" src="" alt="Your photo" /><div id="face-status"></div></div>
+    <div id="face-results"></div>
+    <br/>
+    <button class="btn btn-secondary" onclick="skipFace()" style="margin-right:0.5rem">Skip this test</button>
+    <button class="btn btn-primary" id="face-analyse-btn" style="display:none" onclick="analyseFace()">🔍 Analyse Face</button>
+    <button class="btn btn-primary" id="face-next-btn" style="display:none" onclick="computeAndShowResults()">View Results →</button>
+  </div>
+
+  <!-- Step 5: Loading -->
+  <div class="step-panel card" id="step-5" style="text-align:center;padding:3rem">
+    <div style="font-size:2.5rem;margin-bottom:1rem">⏳</div>
     <h2 class="step-title">Computing your risk profile…</h2>
     <p style="color:var(--muted)">Combining all signals — this takes just a moment.</p>
   </div>
@@ -155,300 +128,176 @@
 
 {% block scripts %}
 <script>
-// ── State ─────────────────────────────────────────────────────────────────────
-const state = {
-  currentStep: 1,
-  qAnswers: {},
-  rtTimes: [],
-  voiceFeatures: {},
-  qScores: null,
-  rtResult: null,
-  voiceResult: null,
-};
+const state = { currentStep:1, qAnswers:{}, rtTimes:[], voiceFeatures:{}, faceResult:null, qResult:null, rtResult:null, voiceResult:null };
 
-// ── Questions (hardcoded to match backend) ────────────────────────────────────
 const QUESTIONS = [
-  { id:"sleep_hours",     text:"How many hours do you sleep per night?",                       type:"number", min:0, max:24 },
-  { id:"sleep_quality",   text:"Rate your sleep quality (1 = very poor, 5 = excellent)",       type:"scale" },
-  { id:"wake_often",      text:"Do you wake up multiple times during the night?",              type:"yesno" },
-  { id:"mood_low",        text:"Have you felt persistently sad or hopeless recently?",         type:"yesno" },
-  { id:"anxiety_level",   text:"How often do you feel anxious or overwhelmed? (1–5)",          type:"scale" },
-  { id:"concentration",   text:"Do you have difficulty concentrating on tasks?",               type:"yesno" },
-  { id:"thirst",          text:"Do you experience excessive thirst or frequent urination?",    type:"yesno" },
-  { id:"fatigue",         text:"Do you feel unusually fatigued even after rest?",              type:"yesno" },
-  { id:"family_diabetes", text:"Does anyone in your immediate family have diabetes?",          type:"yesno" },
-  { id:"chest_discomfort",text:"Do you experience chest tightness or shortness of breath?",   type:"yesno" },
-  { id:"stress_level",    text:"Rate your daily stress level (1 = low, 5 = very high)",        type:"scale" },
-  { id:"exercise",        text:"How many days per week do you exercise for 30+ minutes?",      type:"number", min:0, max:7 },
-  { id:"tremor",          text:"Have you noticed any trembling in your hands or limbs?",       type:"yesno" },
-  { id:"memory_issues",   text:"Do you frequently forget recent events or words?",             type:"yesno" },
-  { id:"coordination",    text:"Do you sometimes feel unsteady or have balance issues?",       type:"yesno" },
+  { id:"sleep_hours",     text:"How many hours do you sleep per night?",                     type:"number", min:0, max:24 },
+  { id:"sleep_quality",   text:"Rate your sleep quality (1=very poor, 5=excellent)",         type:"scale" },
+  { id:"wake_often",      text:"Do you wake up multiple times during the night?",            type:"yesno" },
+  { id:"mood_low",        text:"Have you felt persistently sad or hopeless recently?",       type:"yesno" },
+  { id:"anxiety_level",   text:"How often do you feel anxious or overwhelmed? (1-5)",        type:"scale" },
+  { id:"concentration",   text:"Do you have difficulty concentrating on tasks?",             type:"yesno" },
+  { id:"thirst",          text:"Do you experience excessive thirst or frequent urination?",  type:"yesno" },
+  { id:"fatigue",         text:"Do you feel unusually fatigued even after rest?",            type:"yesno" },
+  { id:"family_diabetes", text:"Does anyone in your immediate family have diabetes?",        type:"yesno" },
+  { id:"chest_discomfort",text:"Do you experience chest tightness or shortness of breath?", type:"yesno" },
+  { id:"stress_level",    text:"Rate your daily stress level (1=low, 5=very high)",          type:"scale" },
+  { id:"exercise",        text:"How many days per week do you exercise for 30+ minutes?",    type:"number", min:0, max:7 },
+  { id:"tremor",          text:"Have you noticed any trembling in your hands or limbs?",     type:"yesno" },
+  { id:"memory_issues",   text:"Do you frequently forget recent events or words?",           type:"yesno" },
+  { id:"coordination",    text:"Do you sometimes feel unsteady or have balance issues?",     type:"yesno" },
 ];
 
-// ── Render questionnaire ──────────────────────────────────────────────────────
 function renderQuestionnaire() {
-  const form = document.getElementById('q-form');
-  form.innerHTML = QUESTIONS.map(q => {
-    if (q.type === 'yesno') {
-      return `<div class="q-item">
-        <label>${q.text}</label>
-        <div class="radio-group">
-          <input type="radio" name="${q.id}" id="${q.id}_yes" value="yes" onchange="setAnswer('${q.id}','yes')">
-          <label for="${q.id}_yes">Yes</label>
-          <input type="radio" name="${q.id}" id="${q.id}_no" value="no" onchange="setAnswer('${q.id}','no')">
-          <label for="${q.id}_no">No</label>
-        </div>
-      </div>`;
-    } else if (q.type === 'scale') {
-      return `<div class="q-item">
-        <label>${q.text}</label>
-        <div class="radio-group">
-          ${[1,2,3,4,5].map(v => `
-            <input type="radio" name="${q.id}" id="${q.id}_${v}" value="${v}" onchange="setAnswer('${q.id}',${v})">
-            <label for="${q.id}_${v}">${v}</label>
-          `).join('')}
-        </div>
-      </div>`;
-    } else {
-      return `<div class="q-item">
-        <label>${q.text}</label>
-        <input type="number" min="${q.min||0}" max="${q.max||99}" placeholder="Enter value"
-          onchange="setAnswer('${q.id}', this.value)" />
-      </div>`;
-    }
+  document.getElementById('q-form').innerHTML = QUESTIONS.map(q => {
+    if (q.type === 'yesno') return `<div class="q-item"><label>${q.text}</label><div class="radio-group"><input type="radio" name="${q.id}" id="${q.id}_y" value="yes" onchange="setAnswer('${q.id}','yes')"><label for="${q.id}_y">Yes</label><input type="radio" name="${q.id}" id="${q.id}_n" value="no" onchange="setAnswer('${q.id}','no')"><label for="${q.id}_n">No</label></div></div>`;
+    if (q.type === 'scale') return `<div class="q-item"><label>${q.text}</label><div class="radio-group">${[1,2,3,4,5].map(v=>`<input type="radio" name="${q.id}" id="${q.id}_${v}" value="${v}" onchange="setAnswer('${q.id}',${v})"><label for="${q.id}_${v}">${v}</label>`).join('')}</div></div>`;
+    return `<div class="q-item"><label>${q.text}</label><input type="number" min="${q.min||0}" max="${q.max||99}" placeholder="Enter value" onchange="setAnswer('${q.id}',this.value)" /></div>`;
   }).join('');
 }
 
 function setAnswer(id, val) { state.qAnswers[id] = val; }
 
 async function submitQuestionnaire() {
-  // Fill missing with neutral defaults
-  QUESTIONS.forEach(q => {
-    if (state.qAnswers[q.id] === undefined) {
-      state.qAnswers[q.id] = q.type === 'yesno' ? 'no' : q.type === 'scale' ? 3 : 0;
-    }
-  });
-  const res = await fetch('/api/questionnaire', {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(state.qAnswers)
-  });
+  QUESTIONS.forEach(q => { if (state.qAnswers[q.id]===undefined) state.qAnswers[q.id] = q.type==='yesno'?'no':q.type==='scale'?3:0; });
+  const res = await fetch('/api/questionnaire', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(state.qAnswers) });
   state.qResult = await res.json();
   goToStep(2);
 }
 
-// ── Reaction Time ──────────────────────────────────────────────────────────────
-let rtState = 'idle'; // idle | waiting | ready
-let rtStart = 0;
-let rtTimeout = null;
-const RT_TRIALS = 8;
-
+// Reaction Time
+let rtState='idle', rtStart=0, rtTimeout=null;
 function rtTap() {
-  const arena = document.getElementById('rt-arena');
-  const msg   = document.getElementById('rt-msg');
-
-  if (rtState === 'idle') {
-    rtState = 'waiting';
-    arena.className = 'waiting';
-    msg.textContent = 'Get ready…';
-    const delay = 1500 + Math.random() * 3000;
-    rtTimeout = setTimeout(() => {
-      rtState = 'ready';
-      arena.className = 'ready';
-      msg.textContent = 'TAP NOW!';
-      rtStart = performance.now();
-    }, delay);
-
-  } else if (rtState === 'waiting') {
-    // Tapped too early
-    clearTimeout(rtTimeout);
-    rtState = 'idle';
-    msg.textContent = 'Too early! Click to try again.';
-    arena.className = 'waiting';
-
-  } else if (rtState === 'ready') {
-    const elapsed = performance.now() - rtStart;
-    state.rtTimes.push(Math.round(elapsed));
-    rtState = 'idle';
-    arena.className = 'waiting';
-
-    renderRTResults();
-
-    if (state.rtTimes.length >= RT_TRIALS) {
-      msg.textContent = `All ${RT_TRIALS} trials done! ✓`;
-      document.getElementById('rt-next-btn').style.display = 'inline-flex';
-    } else {
-      msg.textContent = `Trial ${state.rtTimes.length}/${RT_TRIALS} done — click for next`;
-    }
+  const arena=document.getElementById('rt-arena'), msg=document.getElementById('rt-msg');
+  if (rtState==='idle') {
+    rtState='waiting'; arena.className='waiting'; msg.textContent='Get ready…';
+    rtTimeout=setTimeout(()=>{ rtState='ready'; arena.className='ready'; msg.textContent='TAP NOW!'; rtStart=performance.now(); }, 1500+Math.random()*3000);
+  } else if (rtState==='waiting') {
+    clearTimeout(rtTimeout); rtState='idle'; msg.textContent='Too early! Click to try again.'; arena.className='waiting';
+  } else if (rtState==='ready') {
+    state.rtTimes.push(Math.round(performance.now()-rtStart)); rtState='idle'; arena.className='waiting';
+    document.getElementById('rt-results').innerHTML = state.rtTimes.map((t,i)=>`<span class="rt-trial">Trial ${i+1}: ${t} ms</span>`).join('');
+    if (state.rtTimes.length>=8) { msg.textContent='All 8 trials done! ✓'; document.getElementById('rt-next-btn').style.display='inline-flex'; }
+    else msg.textContent=`Trial ${state.rtTimes.length}/8 done — click for next`;
   }
 }
+async function skipRT() { state.rtResult={skipped:true,score:0,flags:[]}; goToStep(3); }
 
-function renderRTResults() {
-  const el = document.getElementById('rt-results');
-  el.innerHTML = state.rtTimes.map((t, i) =>
-    `<span class="rt-trial">Trial ${i+1}: ${t} ms</span>`
-  ).join('');
-}
-
-async function skipRT() {
-  state.rtResult = { skipped: true, score: 0, flags: [] };
-  goToStep(3);
-}
-
-// ── Voice Analysis ─────────────────────────────────────────────────────────────
-let mediaRecorder = null;
-let audioChunks   = [];
-let audioCtx      = null;
-let analyser      = null;
-let isRecording   = false;
-let pitchSamples  = [];
-let energySamples = [];
-let recordingStart= 0;
-
-async function toggleRecording() {
-  if (!isRecording) { await startRecording(); }
-  else              { stopRecording(); }
-}
-
+// Voice
+let mediaRecorder=null, audioCtx=null, analyser=null, isRecording=false, pitchSamples=[], energySamples=[], recordingStart=0;
+async function toggleRecording() { if (!isRecording) await startRecording(); else stopRecording(); }
 async function startRecording() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioCtx  = new AudioContext();
-    analyser  = audioCtx.createAnalyser();
-    analyser.fftSize = 2048;
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    audioCtx=new AudioContext(); analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
     audioCtx.createMediaStreamSource(stream).connect(analyser);
-
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks   = [];
-    pitchSamples  = [];
-    energySamples = [];
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.start();
-    isRecording   = true;
-    recordingStart= Date.now();
-
-    document.getElementById('record-btn').innerHTML = '⏹ Stop Recording';
-    document.getElementById('voice-status').innerHTML =
-      '<span class="recording-dot"></span> Recording… read the passage aloud';
-
+    mediaRecorder=new MediaRecorder(stream); pitchSamples=[]; energySamples=[];
+    mediaRecorder.start(); isRecording=true; recordingStart=Date.now();
+    document.getElementById('record-btn').innerHTML='⏹ Stop Recording';
+    document.getElementById('voice-status').innerHTML='<span class="recording-dot"></span> Recording… read the passage aloud';
     collectAudioFeatures();
-  } catch(e) {
-    document.getElementById('voice-status').textContent = 'Microphone access denied.';
-  }
+  } catch(e) { document.getElementById('voice-status').textContent='Microphone access denied.'; }
 }
-
 function collectAudioFeatures() {
   if (!isRecording) return;
-  const buf = new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(buf);
-
-  // RMS energy
-  const rms = Math.sqrt(buf.reduce((s,v) => s + v*v, 0) / buf.length);
-  energySamples.push(rms);
-
-  // Naive pitch via zero-crossing rate
-  let zc = 0;
-  for (let i = 1; i < buf.length; i++) {
-    if ((buf[i] >= 0) !== (buf[i-1] >= 0)) zc++;
-  }
-  const zcPitch = (zc / 2) * (audioCtx.sampleRate / buf.length);
-  if (zcPitch > 60 && zcPitch < 400) pitchSamples.push(zcPitch);
-
-  setTimeout(collectAudioFeatures, 100);
+  const buf=new Float32Array(analyser.fftSize); analyser.getFloatTimeDomainData(buf);
+  energySamples.push(Math.sqrt(buf.reduce((s,v)=>s+v*v,0)/buf.length));
+  let zc=0; for(let i=1;i<buf.length;i++) if((buf[i]>=0)!==(buf[i-1]>=0)) zc++;
+  const p=(zc/2)*(audioCtx.sampleRate/buf.length); if(p>60&&p<400) pitchSamples.push(p);
+  setTimeout(collectAudioFeatures,100);
 }
-
 function stopRecording() {
-  if (!mediaRecorder) return;
-  mediaRecorder.stop();
-  isRecording = false;
-  mediaRecorder.stream.getTracks().forEach(t => t.stop());
+  mediaRecorder.stop(); isRecording=false; mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+  const dur=(Date.now()-recordingStart)/1000;
+  const avgE=energySamples.length?energySamples.reduce((a,b)=>a+b,0)/energySamples.length:0;
+  const avgP=pitchSamples.length?pitchSamples.reduce((a,b)=>a+b,0)/pitchSamples.length:150;
+  const stdP=pitchSamples.length>1?Math.sqrt(pitchSamples.reduce((s,p)=>s+(p-avgP)**2,0)/pitchSamples.length):20;
+  state.voiceFeatures={pitch_mean_hz:Math.round(avgP),pitch_std_hz:Math.round(stdP),energy_mean:parseFloat(avgE.toFixed(4)),duration_sec:Math.round(dur)};
+  document.getElementById('record-btn').innerHTML='🔴 Re-record';
+  document.getElementById('voice-status').textContent='Recording complete ✓';
+  document.getElementById('voice-features').innerHTML=`<br/>Detected: pitch ~${state.voiceFeatures.pitch_mean_hz} Hz | energy ${state.voiceFeatures.energy_mean} | ${dur.toFixed(1)}s`;
+  document.getElementById('voice-next-btn').style.display='inline-flex';
+}
+async function skipVoice() { state.voiceResult={skipped:true,score:0,flags:[]}; goToStep(4); }
 
-  const duration = (Date.now() - recordingStart) / 1000;
-  const avgEnergy = energySamples.length
-    ? energySamples.reduce((a,b)=>a+b,0)/energySamples.length : 0;
-  const avgPitch = pitchSamples.length
-    ? pitchSamples.reduce((a,b)=>a+b,0)/pitchSamples.length : 150;
-  const pitchStd = pitchSamples.length > 1
-    ? Math.sqrt(pitchSamples.reduce((s,p)=>s+(p-avgPitch)**2,0)/pitchSamples.length) : 20;
-
-  state.voiceFeatures = {
-    pitch_mean_hz:   Math.round(avgPitch),
-    pitch_std_hz:    Math.round(pitchStd),
-    energy_mean:     parseFloat(avgEnergy.toFixed(4)),
-    duration_sec:    Math.round(duration),
+// Facial Analysis
+let faceBase64=null;
+function handleFaceUpload(event) {
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    faceBase64=e.target.result;
+    document.getElementById('face-img').src=faceBase64;
+    document.getElementById('face-preview').style.display='block';
+    document.getElementById('face-status').textContent='Photo uploaded ✓ — click Analyse Face below';
+    document.getElementById('face-analyse-btn').style.display='inline-flex';
+    document.getElementById('face-results').innerHTML='';
+    document.getElementById('face-next-btn').style.display='none';
   };
-
-  document.getElementById('record-btn').innerHTML = '🔴 Re-record';
-  document.getElementById('voice-status').textContent = 'Recording complete ✓';
-  document.getElementById('voice-features').innerHTML =
-    `<br/>Detected: pitch ~${state.voiceFeatures.pitch_mean_hz} Hz | energy ${state.voiceFeatures.energy_mean} | ${duration.toFixed(1)}s`;
-  document.getElementById('voice-next-btn').style.display = 'inline-flex';
+  reader.readAsDataURL(file);
 }
-
-async function skipVoice() {
-  state.voiceResult = { skipped: true, score: 0, flags: [] };
-  await computeAndShowResults();
+async function analyseFace() {
+  const btn=document.getElementById('face-analyse-btn');
+  btn.textContent='⏳ Analysing…'; btn.disabled=true;
+  document.getElementById('face-status').textContent='Running facial analysis — this may take 10-20 seconds…';
+  try {
+    const res=await fetch('/api/facial-analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:faceBase64})});
+    const data=await res.json();
+    if (data.error) { document.getElementById('face-status').textContent='❌ '+data.error; btn.textContent='🔍 Retry'; btn.disabled=false; return; }
+    state.faceResult=data;
+    const emotions=data.emotions||{};
+    const sorted=Object.entries(emotions).sort((a,b)=>b[1]-a[1]);
+    const colors={happy:'#3fb950',sad:'#58a6ff',angry:'#f85149',fearful:'#f0883e',surprised:'#d2a8ff',disgusted:'#ffa657',neutral:'#8b949e'};
+    document.getElementById('face-results').innerHTML=`
+      <br/>
+      <div class="face-info-grid">
+        <div class="face-info-card"><div class="val" style="text-transform:capitalize">${data.dominant_emotion}</div><div class="lbl">Dominant Emotion</div></div>
+        <div class="face-info-card"><div class="val">${data.age}</div><div class="lbl">Estimated Age</div></div>
+        <div class="face-info-card"><div class="val">${data.gender}</div><div class="lbl">Gender</div></div>
+      </div>
+      <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:0.6rem">Emotion Breakdown</h3>
+      ${sorted.map(([emo,pct])=>`<div class="emotion-bar-wrap"><div class="emotion-label"><span style="text-transform:capitalize">${emo}</span><span>${pct.toFixed(1)}%</span></div><div style="background:var(--border);border-radius:4px;height:8px;"><div class="emotion-bar" style="width:${pct}%;background:${colors[emo]||'var(--accent2)'}"></div></div></div>`).join('')}
+    `;
+    document.getElementById('face-status').textContent='Analysis complete ✓';
+    btn.style.display='none';
+    document.getElementById('face-next-btn').style.display='inline-flex';
+  } catch(e) { document.getElementById('face-status').textContent='❌ Error. Please try again.'; btn.textContent='🔍 Retry'; btn.disabled=false; }
 }
+async function skipFace() { state.faceResult={skipped:true,mental_score:0,cardiovascular_score:0,flags:[]}; await computeAndShowResults(); }
 
-// ── Final compute + navigate ──────────────────────────────────────────────────
+// Final compute
 async function computeAndShowResults() {
-  goToStep(4);
-
-  // If RT test was done, get score
-  if (!state.rtResult && state.rtTimes.length >= 3) {
-    const res = await fetch('/api/reaction-time', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ times: state.rtTimes })
-    });
-    state.rtResult = await res.json();
-  } else if (!state.rtResult) {
-    state.rtResult = { score: 0, flags: [] };
-  }
-
-  // Voice analysis
-  if (!state.voiceResult && Object.keys(state.voiceFeatures).length > 0) {
-    const res = await fetch('/api/voice-analysis', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(state.voiceFeatures)
-    });
-    state.voiceResult = await res.json();
-  } else if (!state.voiceResult) {
-    state.voiceResult = { score: 0, flags: [] };
-  }
-
-  // Compute final risk profile
-  const payload = {
-    questionnaire_scores: state.qResult?.scores || {},
-    questionnaire_flags:  state.qResult?.flags  || [],
-    reaction_time_score:  state.rtResult?.score  || 0,
-    reaction_time_flags:  state.rtResult?.flags  || [],
-    voice_score:          state.voiceResult?.score || 0,
-    voice_flags:          state.voiceResult?.flags || [],
+  goToStep(5);
+  if (!state.rtResult && state.rtTimes.length>=3) {
+    const res=await fetch('/api/reaction-time',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({times:state.rtTimes})});
+    state.rtResult=await res.json();
+  } else if (!state.rtResult) state.rtResult={score:0,flags:[]};
+  if (!state.voiceResult && Object.keys(state.voiceFeatures).length>0) {
+    const res=await fetch('/api/voice-analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.voiceFeatures)});
+    state.voiceResult=await res.json();
+  } else if (!state.voiceResult) state.voiceResult={score:0,flags:[]};
+  const payload={
+    questionnaire_scores:state.qResult?.scores||{},questionnaire_flags:state.qResult?.flags||[],
+    reaction_time_score:state.rtResult?.score||0,reaction_time_flags:state.rtResult?.flags||[],
+    voice_score:state.voiceResult?.score||0,voice_flags:state.voiceResult?.flags||[],
+    face_mental_score:state.faceResult?.mental_score||0,
+    face_cardio_score:state.faceResult?.cardiovascular_score||0,
+    face_flags:state.faceResult?.flags||[],
   };
-
-  const res = await fetch('/api/compute-risk', {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  });
-  const riskProfile = await res.json();
-
-  sessionStorage.setItem('riskProfile', JSON.stringify(riskProfile));
-  window.location.href = '/results';
+  const res=await fetch('/api/compute-risk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const riskProfile=await res.json();
+  sessionStorage.setItem('riskProfile',JSON.stringify(riskProfile));
+  if (state.faceResult && !state.faceResult.skipped) sessionStorage.setItem('faceResult',JSON.stringify(state.faceResult));
+  window.location.href='/results';
 }
 
-// ── Step navigation ───────────────────────────────────────────────────────────
 function goToStep(n) {
-  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(`step-${n}`).classList.add('active');
-
-  for (let i = 1; i <= 4; i++) {
-    const dot = document.getElementById(`dot-${i}`);
-    dot.className = 'step-dot' + (i < n ? ' done' : i === n ? ' active' : '');
-  }
-  state.currentStep = n;
-  window.scrollTo(0, 0);
+  for(let i=1;i<=5;i++) { const d=document.getElementById(`dot-${i}`); d.className='step-dot'+(i<n?' done':i===n?' active':''); }
+  state.currentStep=n; window.scrollTo(0,0);
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
 renderQuestionnaire();
 </script>
 {% endblock %}

@@ -5,6 +5,15 @@ from modules.questionnaire import evaluate_questionnaire
 from modules.reaction_time import evaluate_reaction_time
 from modules.voice_analysis import analyze_voice_features
 from modules.risk_engine import compute_risk_profile
+from modules.facial_analysis import analyze_face
+
+@app.route("/api/facial-analysis", methods=["POST"])
+def api_facial_analysis():
+    data = request.get_json()
+    if not data or "image" not in data:
+        return jsonify({"error": "No image provided"}), 400
+    result = analyze_face(data["image"])
+    return jsonify(result)
 
 app = Flask(__name__)
 app.secret_key = "esp-secret-key-change-in-production"
