@@ -139,8 +139,8 @@ def analyze_voice_features(data: dict) -> dict:
 
 
 def _risk_level(score: int) -> str:
-    if score >= 55:
+    if score >= 70:
         return "high"
-    elif score >= 25:
+    elif score >= 40:
         return "moderate"
     return "low"

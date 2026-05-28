@@ -94,8 +94,8 @@ def evaluate_reaction_time(times: list) -> dict:
 
 
 def _risk_level(score: int) -> str:
-    if score >= 60:
+    if score >= 75:
         return "high"
-    elif score >= 30:
+    elif score >= 45:
         return "moderate"
     return "low"

@@ -148,7 +148,6 @@ def evaluate_questionnaire(responses: dict) -> dict:
         "raw":    scores,
     }
 
-
 def _yes(val) -> bool:
     if isinstance(val, bool):
         return val
@@ -158,17 +157,16 @@ def _yes(val) -> bool:
 def _build_flags(scores: dict) -> list:
     flags = []
     thresholds = {
-        "mental":         (40, "Possible early signs of stress, anxiety, or depression"),
-        "metabolic":      (45, "Indicators consistent with metabolic risk (e.g. pre-diabetes)"),
-        "cardiovascular": (40, "Elevated cardiovascular stress markers detected"),
-        "neurological":   (35, "Possible early neurological indicators noted"),
-        "sleep":          (40, "Signs of disrupted sleep patterns detected"),
+        "mental":         (60, "Possible early signs of stress, anxiety, or depression"),
+        "metabolic":      (65, "Indicators consistent with metabolic risk (e.g. pre-diabetes)"),
+        "cardiovascular": (60, "Elevated cardiovascular stress markers detected"),
+        "neurological":   (55, "Possible early neurological indicators noted"),
+        "sleep":          (60, "Signs of disrupted sleep patterns detected"),
     }
     for cat, (threshold, msg) in thresholds.items():
         if scores.get(cat, 0) >= threshold:
             flags.append({"category": cat, "message": msg, "score": scores[cat]})
     return flags
-
 
 def get_questions() -> list:
     return QUESTIONS

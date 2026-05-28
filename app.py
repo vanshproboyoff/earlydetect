@@ -7,18 +7,8 @@ from modules.voice_analysis import analyze_voice_features
 from modules.risk_engine import compute_risk_profile
 from modules.facial_analysis import analyze_face
 
-@app.route("/api/facial-analysis", methods=["POST"])
-def api_facial_analysis():
-    data = request.get_json()
-    if not data or "image" not in data:
-        return jsonify({"error": "No image provided"}), 400
-    result = analyze_face(data["image"])
-    return jsonify(result)
-
 app = Flask(__name__)
 app.secret_key = "esp-secret-key-change-in-production"
-
-# ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
 def index():
@@ -32,8 +22,6 @@ def screening():
 @app.route("/results")
 def results():
     return render_template("results.html")
-
-# ── API Endpoints ─────────────────────────────────────────────────────────────
 
 @app.route("/api/questionnaire", methods=["POST"])
 def api_questionnaire():
@@ -53,14 +41,18 @@ def api_reaction_time():
 
 @app.route("/api/voice-analysis", methods=["POST"])
 def api_voice_analysis():
-    """
-    Accepts JSON with voice feature data extracted client-side (pitch, energy, pauses).
-    In production, integrate a real speech API (e.g. AssemblyAI, Azure Speech).
-    """
     data = request.get_json()
     if not data:
         return jsonify({"error": "No voice data provided"}), 400
     result = analyze_voice_features(data)
+    return jsonify(result)
+
+@app.route("/api/facial-analysis", methods=["POST"])
+def api_facial_analysis():
+    data = request.get_json()
+    if not data or "image" not in data:
+        return jsonify({"error": "No image provided"}), 400
+    result = analyze_face(data["image"])
     return jsonify(result)
 
 @app.route("/api/compute-risk", methods=["POST"])
@@ -70,8 +62,6 @@ def api_compute_risk():
         return jsonify({"error": "No data provided"}), 400
     result = compute_risk_profile(data)
     return jsonify(result)
-
-# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

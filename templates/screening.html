@@ -7,12 +7,12 @@
   .progress-bar::before { content:''; position:absolute; top:50%; left:0; right:0; height:2px; background:var(--border); z-index:0; }
   .step-dot { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:600; z-index:1; border:2px solid var(--border); background:var(--bg); transition:all 0.3s; }
   .step-dot.active { border-color:var(--accent2); color:var(--accent2); }
-  .step-dot.done   { background:var(--accent); border-color:var(--accent); color:#000; }
+  .step-dot.done { background:var(--accent); border-color:var(--accent); color:#000; }
   .step-panel { display:none; }
   .step-panel.active { display:block; animation:fadeIn 0.3s; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;} }
   .step-title { font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:0.4rem; }
-  .step-sub   { color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem; }
+  .step-sub { color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem; }
   .q-item { margin-bottom:1.2rem; }
   .q-item label { display:block; font-size:0.9rem; margin-bottom:0.4rem; }
   .q-item input[type=number] { width:100%; padding:0.55rem 0.75rem; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.9rem; font-family:inherit; }
@@ -22,23 +22,15 @@
   .radio-group input:checked + label { border-color:var(--accent2); background:rgba(88,166,255,0.1); color:var(--accent2); }
   #rt-arena { height:220px; border:2px dashed var(--border); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; transition:background 0.2s; }
   #rt-arena.waiting { background:rgba(88,166,255,0.06); }
-  #rt-arena.ready   { background:rgba(63,185,80,0.15); border-color:var(--accent); }
+  #rt-arena.ready { background:rgba(63,185,80,0.15); border-color:var(--accent); }
   #rt-arena p { font-size:1.1rem; color:var(--muted); pointer-events:none; }
   .rt-trial { display:inline-block; padding:0.2rem 0.6rem; background:var(--surface); border-radius:6px; font-size:0.8rem; margin:0.2rem; border:1px solid var(--border); }
   #voice-passage { background:var(--surface); border-left:3px solid var(--accent2); padding:1rem 1.2rem; border-radius:8px; font-style:italic; margin-bottom:1rem; line-height:1.7; font-size:0.95rem; }
   #voice-controls { display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap; }
   #voice-status { font-size:0.85rem; color:var(--muted); }
   .recording-dot { display:inline-block; width:8px; height:8px; background:var(--danger); border-radius:50%; animation:pulse 1s infinite; margin-right:4px; }
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.3;} }
   #voice-features { margin-top:1rem; font-size:0.82rem; color:var(--muted); }
-  #face-upload-area { border:2px dashed var(--border); border-radius:var(--radius); padding:2.5rem; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:1rem; }
-  #face-upload-area:hover { border-color:var(--accent2); background:rgba(88,166,255,0.04); }
-  #face-upload-area .icon { font-size:2.5rem; margin-bottom:0.5rem; }
-  #face-upload-area p { color:var(--muted); font-size:0.9rem; }
-  #face-preview { display:none; margin-top:1rem; text-align:center; }
-  #face-preview img { max-width:280px; max-height:280px; border-radius:var(--radius); border:2px solid var(--border); object-fit:cover; }
-  #face-input { display:none; }
-  #face-status { margin-top:0.8rem; font-size:0.85rem; color:var(--muted); }
   .emotion-bar-wrap { margin:0.4rem 0; }
   .emotion-label { display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:2px; }
   .emotion-bar { height:8px; border-radius:4px; transition:width 0.5s; }
@@ -102,19 +94,19 @@
   <!-- Step 4: Facial Analysis -->
   <div class="step-panel card" id="step-4">
     <h2 class="step-title">📸 Facial Expression Analysis</h2>
-    <p class="step-sub">Upload a clear photo of your face in natural lighting. Never stored or shared.</p>
-    <div id="face-upload-area" onclick="document.getElementById('face-input').click()">
-      <div class="icon">🤳</div>
-      <p>Click to upload a photo (JPG or PNG)</p>
-      <p style="font-size:0.8rem;margin-top:0.3rem">Best results: face clearly visible, good lighting</p>
+    <p class="step-sub">Click Start Camera and look naturally at the screen for 3 seconds.</p>
+    <div style="text-align:center">
+      <video id="face-video" width="320" height="240" autoplay muted style="border-radius:var(--radius);border:2px solid var(--border);display:none"></video>
+      <canvas id="face-canvas" width="320" height="240" style="border-radius:var(--radius);border:2px solid var(--accent);display:none"></canvas>
     </div>
-    <input type="file" id="face-input" accept="image/jpeg,image/png,image/jpg" onchange="handleFaceUpload(event)" />
-    <div id="face-preview"><img id="face-img" src="" alt="Your photo" /><div id="face-status"></div></div>
+    <div id="face-status" style="margin-top:1rem;font-size:0.85rem;color:var(--muted);text-align:center">Click Start Camera to begin</div>
     <div id="face-results"></div>
     <br/>
-    <button class="btn btn-secondary" onclick="skipFace()" style="margin-right:0.5rem">Skip this test</button>
-    <button class="btn btn-primary" id="face-analyse-btn" style="display:none" onclick="analyseFace()">🔍 Analyse Face</button>
-    <button class="btn btn-primary" id="face-next-btn" style="display:none" onclick="computeAndShowResults()">View Results →</button>
+    <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
+      <button class="btn btn-secondary" onclick="skipFace()">Skip this test</button>
+      <button class="btn btn-primary" id="face-start-btn" onclick="startFaceAnalysis()">📷 Start Camera</button>
+      <button class="btn btn-primary" id="face-next-btn" style="display:none" onclick="computeAndShowResults()">View Results →</button>
+    </div>
   </div>
 
   <!-- Step 5: Loading -->
@@ -150,33 +142,33 @@ const QUESTIONS = [
 
 function renderQuestionnaire() {
   document.getElementById('q-form').innerHTML = QUESTIONS.map(q => {
-    if (q.type === 'yesno') return `<div class="q-item"><label>${q.text}</label><div class="radio-group"><input type="radio" name="${q.id}" id="${q.id}_y" value="yes" onchange="setAnswer('${q.id}','yes')"><label for="${q.id}_y">Yes</label><input type="radio" name="${q.id}" id="${q.id}_n" value="no" onchange="setAnswer('${q.id}','no')"><label for="${q.id}_n">No</label></div></div>`;
-    if (q.type === 'scale') return `<div class="q-item"><label>${q.text}</label><div class="radio-group">${[1,2,3,4,5].map(v=>`<input type="radio" name="${q.id}" id="${q.id}_${v}" value="${v}" onchange="setAnswer('${q.id}',${v})"><label for="${q.id}_${v}">${v}</label>`).join('')}</div></div>`;
+    if (q.type==='yesno') return `<div class="q-item"><label>${q.text}</label><div class="radio-group"><input type="radio" name="${q.id}" id="${q.id}_y" value="yes" onchange="setAnswer('${q.id}','yes')"><label for="${q.id}_y">Yes</label><input type="radio" name="${q.id}" id="${q.id}_n" value="no" onchange="setAnswer('${q.id}','no')"><label for="${q.id}_n">No</label></div></div>`;
+    if (q.type==='scale') return `<div class="q-item"><label>${q.text}</label><div class="radio-group">${[1,2,3,4,5].map(v=>`<input type="radio" name="${q.id}" id="${q.id}_${v}" value="${v}" onchange="setAnswer('${q.id}',${v})"><label for="${q.id}_${v}">${v}</label>`).join('')}</div></div>`;
     return `<div class="q-item"><label>${q.text}</label><input type="number" min="${q.min||0}" max="${q.max||99}" placeholder="Enter value" onchange="setAnswer('${q.id}',this.value)" /></div>`;
   }).join('');
 }
 
-function setAnswer(id, val) { state.qAnswers[id] = val; }
+function setAnswer(id,val) { state.qAnswers[id]=val; }
 
 async function submitQuestionnaire() {
-  QUESTIONS.forEach(q => { if (state.qAnswers[q.id]===undefined) state.qAnswers[q.id] = q.type==='yesno'?'no':q.type==='scale'?3:0; });
-  const res = await fetch('/api/questionnaire', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(state.qAnswers) });
-  state.qResult = await res.json();
+  QUESTIONS.forEach(q=>{ if(state.qAnswers[q.id]===undefined) state.qAnswers[q.id]=q.type==='yesno'?'no':q.type==='scale'?3:0; });
+  const res=await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.qAnswers)});
+  state.qResult=await res.json();
   goToStep(2);
 }
 
 // Reaction Time
-let rtState='idle', rtStart=0, rtTimeout=null;
+let rtState='idle',rtStart=0,rtTimeout=null;
 function rtTap() {
-  const arena=document.getElementById('rt-arena'), msg=document.getElementById('rt-msg');
+  const arena=document.getElementById('rt-arena'),msg=document.getElementById('rt-msg');
   if (rtState==='idle') {
     rtState='waiting'; arena.className='waiting'; msg.textContent='Get ready…';
-    rtTimeout=setTimeout(()=>{ rtState='ready'; arena.className='ready'; msg.textContent='TAP NOW!'; rtStart=performance.now(); }, 1500+Math.random()*3000);
+    rtTimeout=setTimeout(()=>{ rtState='ready'; arena.className='ready'; msg.textContent='TAP NOW!'; rtStart=performance.now(); },1500+Math.random()*3000);
   } else if (rtState==='waiting') {
     clearTimeout(rtTimeout); rtState='idle'; msg.textContent='Too early! Click to try again.'; arena.className='waiting';
   } else if (rtState==='ready') {
     state.rtTimes.push(Math.round(performance.now()-rtStart)); rtState='idle'; arena.className='waiting';
-    document.getElementById('rt-results').innerHTML = state.rtTimes.map((t,i)=>`<span class="rt-trial">Trial ${i+1}: ${t} ms</span>`).join('');
+    document.getElementById('rt-results').innerHTML=state.rtTimes.map((t,i)=>`<span class="rt-trial">Trial ${i+1}: ${t} ms</span>`).join('');
     if (state.rtTimes.length>=8) { msg.textContent='All 8 trials done! ✓'; document.getElementById('rt-next-btn').style.display='inline-flex'; }
     else msg.textContent=`Trial ${state.rtTimes.length}/8 done — click for next`;
   }
@@ -184,11 +176,11 @@ function rtTap() {
 async function skipRT() { state.rtResult={skipped:true,score:0,flags:[]}; goToStep(3); }
 
 // Voice
-let mediaRecorder=null, audioCtx=null, analyser=null, isRecording=false, pitchSamples=[], energySamples=[], recordingStart=0;
-async function toggleRecording() { if (!isRecording) await startRecording(); else stopRecording(); }
+let mediaRecorder=null,audioCtx=null,analyser=null,isRecording=false,pitchSamples=[],energySamples=[],recordingStart=0;
+async function toggleRecording() { if(!isRecording) await startRecording(); else stopRecording(); }
 async function startRecording() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
     audioCtx=new AudioContext(); analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
     audioCtx.createMediaStreamSource(stream).connect(analyser);
     mediaRecorder=new MediaRecorder(stream); pitchSamples=[]; energySamples=[];
@@ -199,7 +191,7 @@ async function startRecording() {
   } catch(e) { document.getElementById('voice-status').textContent='Microphone access denied.'; }
 }
 function collectAudioFeatures() {
-  if (!isRecording) return;
+  if(!isRecording) return;
   const buf=new Float32Array(analyser.fftSize); analyser.getFloatTimeDomainData(buf);
   energySamples.push(Math.sqrt(buf.reduce((s,v)=>s+v*v,0)/buf.length));
   let zc=0; for(let i=1;i<buf.length;i++) if((buf[i]>=0)!==(buf[i-1]>=0)) zc++;
@@ -220,62 +212,17 @@ function stopRecording() {
 }
 async function skipVoice() { state.voiceResult={skipped:true,score:0,flags:[]}; goToStep(4); }
 
-// Facial Analysis
-let faceBase64=null;
-function handleFaceUpload(event) {
-  const file=event.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=(e)=>{
-    faceBase64=e.target.result;
-    document.getElementById('face-img').src=faceBase64;
-    document.getElementById('face-preview').style.display='block';
-    document.getElementById('face-status').textContent='Photo uploaded ✓ — click Analyse Face below';
-    document.getElementById('face-analyse-btn').style.display='inline-flex';
-    document.getElementById('face-results').innerHTML='';
-    document.getElementById('face-next-btn').style.display='none';
-  };
-  reader.readAsDataURL(file);
-}
-async function analyseFace() {
-  const btn=document.getElementById('face-analyse-btn');
-  btn.textContent='⏳ Analysing…'; btn.disabled=true;
-  document.getElementById('face-status').textContent='Running facial analysis — this may take 10-20 seconds…';
-  try {
-    const res=await fetch('/api/facial-analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:faceBase64})});
-    const data=await res.json();
-    if (data.error) { document.getElementById('face-status').textContent='❌ '+data.error; btn.textContent='🔍 Retry'; btn.disabled=false; return; }
-    state.faceResult=data;
-    const emotions=data.emotions||{};
-    const sorted=Object.entries(emotions).sort((a,b)=>b[1]-a[1]);
-    const colors={happy:'#3fb950',sad:'#58a6ff',angry:'#f85149',fearful:'#f0883e',surprised:'#d2a8ff',disgusted:'#ffa657',neutral:'#8b949e'};
-    document.getElementById('face-results').innerHTML=`
-      <br/>
-      <div class="face-info-grid">
-        <div class="face-info-card"><div class="val" style="text-transform:capitalize">${data.dominant_emotion}</div><div class="lbl">Dominant Emotion</div></div>
-        <div class="face-info-card"><div class="val">${data.age}</div><div class="lbl">Estimated Age</div></div>
-        <div class="face-info-card"><div class="val">${data.gender}</div><div class="lbl">Gender</div></div>
-      </div>
-      <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:0.6rem">Emotion Breakdown</h3>
-      ${sorted.map(([emo,pct])=>`<div class="emotion-bar-wrap"><div class="emotion-label"><span style="text-transform:capitalize">${emo}</span><span>${pct.toFixed(1)}%</span></div><div style="background:var(--border);border-radius:4px;height:8px;"><div class="emotion-bar" style="width:${pct}%;background:${colors[emo]||'var(--accent2)'}"></div></div></div>`).join('')}
-    `;
-    document.getElementById('face-status').textContent='Analysis complete ✓';
-    btn.style.display='none';
-    document.getElementById('face-next-btn').style.display='inline-flex';
-  } catch(e) { document.getElementById('face-status').textContent='❌ Error. Please try again.'; btn.textContent='🔍 Retry'; btn.disabled=false; }
-}
-async function skipFace() { state.faceResult={skipped:true,mental_score:0,cardiovascular_score:0,flags:[]}; await computeAndShowResults(); }
-
 // Final compute
 async function computeAndShowResults() {
   goToStep(5);
-  if (!state.rtResult && state.rtTimes.length>=3) {
+  if (!state.rtResult&&state.rtTimes.length>=3) {
     const res=await fetch('/api/reaction-time',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({times:state.rtTimes})});
     state.rtResult=await res.json();
-  } else if (!state.rtResult) state.rtResult={score:0,flags:[]};
-  if (!state.voiceResult && Object.keys(state.voiceFeatures).length>0) {
+  } else if(!state.rtResult) state.rtResult={score:0,flags:[]};
+  if (!state.voiceResult&&Object.keys(state.voiceFeatures).length>0) {
     const res=await fetch('/api/voice-analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.voiceFeatures)});
     state.voiceResult=await res.json();
-  } else if (!state.voiceResult) state.voiceResult={score:0,flags:[]};
+  } else if(!state.voiceResult) state.voiceResult={score:0,flags:[]};
   const payload={
     questionnaire_scores:state.qResult?.scores||{},questionnaire_flags:state.qResult?.flags||[],
     reaction_time_score:state.rtResult?.score||0,reaction_time_flags:state.rtResult?.flags||[],
@@ -287,17 +234,85 @@ async function computeAndShowResults() {
   const res=await fetch('/api/compute-risk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
   const riskProfile=await res.json();
   sessionStorage.setItem('riskProfile',JSON.stringify(riskProfile));
-  if (state.faceResult && !state.faceResult.skipped) sessionStorage.setItem('faceResult',JSON.stringify(state.faceResult));
+  if(state.faceResult&&!state.faceResult.skipped) sessionStorage.setItem('faceResult',JSON.stringify(state.faceResult));
   window.location.href='/results';
 }
 
 function goToStep(n) {
   document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(`step-${n}`).classList.add('active');
-  for(let i=1;i<=5;i++) { const d=document.getElementById(`dot-${i}`); d.className='step-dot'+(i<n?' done':i===n?' active':''); }
+  for(let i=1;i<=5;i++){const d=document.getElementById(`dot-${i}`);d.className='step-dot'+(i<n?' done':i===n?' active':'');}
   state.currentStep=n; window.scrollTo(0,0);
 }
 
 renderQuestionnaire();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script>
+const MODEL_URL='https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
+let faceModelsLoaded=false;
+
+async function loadFaceModels() {
+  if(faceModelsLoaded) return;
+  document.getElementById('face-status').textContent='Loading face detection models…';
+  await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+  await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+  faceModelsLoaded=true;
+}
+
+async function startFaceAnalysis() {
+  const btn=document.getElementById('face-start-btn');
+  btn.disabled=true; btn.textContent='⏳ Loading…';
+  await loadFaceModels();
+  const video=document.getElementById('face-video');
+  try {
+    const stream=await navigator.mediaDevices.getUserMedia({video:true});
+    video.srcObject=stream; video.style.display='block';
+    document.getElementById('face-status').textContent='Look naturally at the camera… analysing in 3 seconds';
+    btn.textContent='⏳ Analysing…';
+    await new Promise(r=>setTimeout(r,3000));
+    const canvas=document.getElementById('face-canvas');
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(video,0,0,320,240);
+    canvas.style.display='block'; video.style.display='none';
+    stream.getTracks().forEach(t=>t.stop());
+    const detection=await faceapi.detectSingleFace(canvas,new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+    if(!detection) {
+      document.getElementById('face-status').textContent='❌ No face detected. Try better lighting or click retry.';
+      btn.textContent='📷 Retry'; btn.disabled=false; canvas.style.display='none';
+      return;
+    }
+    const expressions=detection.expressions;
+    const res=await fetch('/api/facial-analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(expressions)});
+    const data=await res.json();
+    state.faceResult=data;
+    const colors={happy:'#3fb950',sad:'#58a6ff',angry:'#f85149',fearful:'#f0883e',surprised:'#d2a8ff',disgusted:'#ffa657',neutral:'#8b949e'};
+    const emotions=data.emotions||{};
+    const sorted=Object.entries(emotions).sort((a,b)=>b[1]-a[1]);
+    document.getElementById('face-results').innerHTML=`
+      <br/>
+      <div class="face-info-grid">
+        <div class="face-info-card" style="grid-column:span 3">
+          <div class="val" style="text-transform:capitalize">${data.dominant_emotion}</div>
+          <div class="lbl">Dominant Emotion Detected</div>
+        </div>
+      </div>
+      <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:0.6rem">Emotion Breakdown</h3>
+      ${sorted.map(([emo,pct])=>`<div class="emotion-bar-wrap"><div class="emotion-label"><span style="text-transform:capitalize">${emo}</span><span>${pct.toFixed(1)}%</span></div><div style="background:var(--border);border-radius:4px;height:8px;"><div class="emotion-bar" style="width:${pct}%;background:${colors[emo]||'var(--accent2)'}"></div></div></div>`).join('')}
+    `;
+    document.getElementById('face-status').textContent='Analysis complete ✓';
+    btn.style.display='none';
+    document.getElementById('face-next-btn').style.display='inline-flex';
+  } catch(e) {
+    document.getElementById('face-status').textContent='❌ Camera access denied or error occurred.';
+    btn.textContent='📷 Retry'; btn.disabled=false;
+  }
+}
+
+async function skipFace() {
+  state.faceResult={skipped:true,mental_score:0,cardiovascular_score:0,flags:[]};
+  await computeAndShowResults();
+}
 </script>
 {% endblock %}
