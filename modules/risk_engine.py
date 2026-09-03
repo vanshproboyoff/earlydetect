@@ -74,27 +74,55 @@ def compute_risk_profile(data: dict) -> dict:
 
     for disease_id, disease in DISEASES.items():
         component_scores = []
+        contributors = []
 
         # Questionnaire contribution
         for cat in disease["categories"]:
             if cat in q_scores:
                 component_scores.append(q_scores[cat])
 
-        # Reaction time contribution
+                contributors.append({
+                    "source": "Questionnaire",
+                    "score": q_scores[cat],
+                    "reasons": [
+                        f["message"]
+                        for f in data.get("questionnaire_flags", [])
+                        if f.get("category") == cat
+                    ]
+                })
+
+    # Reaction time contribution
         if "reaction_time" in disease["modules"] and rt_score > 0:
             component_scores.append(rt_score)
 
-        # Voice contribution
+            contributors.append({
+                "source": "Reaction Time",
+                "score": rt_score,
+                "reasons": [
+                    f["message"]
+                    for f in data.get("reaction_time_flags", [])
+                    if f.get("category") in disease["categories"]
+                ]
+            })
+
+    # Voice contribution
         if "voice" in disease["modules"] and v_score > 0:
             component_scores.append(v_score)
+
+            contributors.append({
+                "source": "Voice Analysis",
+                "score": v_score,
+                "reasons": [
+                    f["message"]
+                    for f in data.get("voice_flags", [])
+                    if f.get("category") in disease["categories"]
+                ]
+            })
 
         if not component_scores:
             final_score = 0
         else:
-            # Weighted average: questionnaire has highest weight
             final_score = round(sum(component_scores) / len(component_scores))
-
-        level = _risk_level(final_score)
 
         # Collect relevant flags for this disease
         relevant_flags = [
@@ -109,6 +137,7 @@ def compute_risk_profile(data: dict) -> dict:
             "score":        final_score,
             "level":        level,
             "flags":        relevant_flags,
+            "contributors": contributors,
             "recommendation": RECOMMENDATIONS[level],
         })
 

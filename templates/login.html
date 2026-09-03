@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Login — EarlyDetect{% endblock %}
+
+{% block content %}
+
+<main style="max-width:450px;margin:4rem auto;">
+
+    <div class="card">
+
+        <h1 style="font-family:'DM Serif Display',serif;margin-bottom:0.5rem;">
+            Welcome Back
+        </h1>
+
+        <p style="color:var(--muted);margin-bottom:1.5rem;">
+            Login to continue to EarlyDetect.
+        </p>
+
+        {% if error %}
+        <div class="disclaimer" style="margin-bottom:1rem;">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+
+            <div class="q-item">
+                <label>Username</label>
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Enter username"
+                    required
+                    style="width:100%;padding:0.65rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);"
+                >
+            </div>
+
+            <div class="q-item">
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter password"
+                    required
+                    style="width:100%;padding:0.65rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);"
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                style="width:100%;"
+            >
+                Login
+            </button>
+
+        </form>
+
+        <p style="text-align:center;margin-top:1.2rem;color:var(--muted);">
+            Don't have an account?
+            <a href="/register">Create one</a>
+        </p>
+
+    </div>
+
+</main>
+
+{% endblock %}

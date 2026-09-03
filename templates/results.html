@@ -32,6 +32,40 @@
   .score-label   { font-size: 0.75rem; color: var(--muted); }
   .level-badge   { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 600; }
   .flag-list     { margin-top: 0.6rem; }
+    .contributor-list {
+    margin-top: 0.8rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .contributor-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .contributor-item {
+    padding: 0.45rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .contributor-source {
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .contributor-score {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-left: 0.3rem;
+  }
+
+  .contributor-reason {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+    line-height: 1.4;
+  }
   .flag-item     { font-size: 0.78rem; color: var(--muted); padding: 0.3rem 0; border-top: 1px solid var(--border); }
   .rec           { font-size: 0.8rem; margin-top: 0.6rem; padding: 0.5rem; background: var(--bg); border-radius: 6px; }
 
@@ -42,6 +76,15 @@
 
 {% block content %}
 <main>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+    <span style="color:var(--muted);font-size:0.85rem;">
+        Screening report for
+    </span>
+
+    <strong>
+        {{ session.get("name", "User") }}
+    </strong>
+  </div>
   <div class="results-header" id="results-header">
     <p style="color:var(--muted); font-size:0.9rem">Loading your results…</p>
   </div>
@@ -81,9 +124,23 @@ function renderResults(profile) {
   const grid = document.getElementById('disease-grid');
   grid.innerHTML = profile.disease_risks.map(d => {
     const color   = levelColor(d.level);
-    const flags   = d.flags.map(f =>
+    const flags = (d.flags || []).map(f =>
       `<div class="flag-item">⚠ ${f.message}</div>`
     ).join('');
+
+    const contributors = (d.contributors || []).map(c => {
+      const reasons = (c.reasons || []).map(reason =>
+        `<div class="contributor-reason">• ${reason}</div>`
+      ).join('');
+
+      return `
+        <div class="contributor-item">
+          <span class="contributor-source">${c.source}</span>
+          <span class="contributor-score">${c.score}/100</span>
+          ${reasons}
+        </div>
+      `;
+    }).join('');
 
     return `
     <div class="card disease-card level-${d.level}">
@@ -102,7 +159,15 @@ function renderResults(profile) {
         ${d.level.charAt(0).toUpperCase()+d.level.slice(1)} Risk
       </span>
       ${flags ? `<div class="flag-list">${flags}</div>` : ''}
-      <div class="rec">💡 ${d.recommendation}</div>
+
+${contributors ? `
+  <div class="contributor-list">
+    <div class="contributor-title">Why this result?</div>
+    ${contributors}
+  </div>
+` : ''}
+
+<div class="rec">💡 ${d.recommendation}</div>
     </div>`;
   }).join('');
 

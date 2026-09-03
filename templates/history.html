@@ -1,0 +1,55 @@
+
+{% extends "base.html" %}
+
+{% block title %}Screening History — EarlyDetect{% endblock %}
+
+{% block content %}
+<main>
+
+  <h1 style="font-family:'DM Serif Display',serif;margin-top:2rem">
+    Screening History
+  </h1>
+
+  <p style="color:var(--muted);margin-bottom:2rem">
+    Your previous EarlyDetect screening results.
+  </p>
+
+  {% if screenings %}
+
+    <div class="disease-grid">
+
+      {% for s in screenings %}
+
+      <div class="card">
+
+        <div style="font-size:0.8rem;color:var(--muted)">
+          {{ s["date"] }}
+        </div>
+
+        <h2 style="margin:0.5rem 0">
+          {{ s["overall_level"]|capitalize }} Risk
+        </h2>
+
+        <p style="font-size:0.85rem;color:var(--muted)">
+          {{ s["high_count"] }} high ·
+          {{ s["moderate_count"] }} moderate indicators
+        </p>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+
+    <div class="card">
+      <p style="color:var(--muted)">
+        You haven't completed any screenings yet.
+      </p>
+    </div>
+
+  {% endif %}
+
+</main>
+{% endblock %}
