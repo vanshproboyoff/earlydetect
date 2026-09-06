@@ -3,48 +3,286 @@
 
 {% block extra_head %}
 <style>
-  .progress-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; position:relative; }
-  .progress-bar::before { content:''; position:absolute; top:50%; left:0; right:0; height:2px; background:var(--border); z-index:0; }
-  .step-dot { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:600; z-index:1; border:2px solid var(--border); background:var(--bg); transition:all 0.3s; }
-  .step-dot.active { border-color:var(--accent2); color:var(--accent2); }
-  .step-dot.done { background:var(--accent); border-color:var(--accent); color:#000; }
-  .step-panel { display:none; }
-  .step-panel.active { display:block; animation:fadeIn 0.3s; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;} }
-  .step-title { font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:0.4rem; }
-  .step-sub { color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem; }
-  .q-item { margin-bottom:1.2rem; }
-  .q-item label { display:block; font-size:0.9rem; margin-bottom:0.4rem; }
-  .q-item input[type=number] { width:100%; padding:0.55rem 0.75rem; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.9rem; font-family:inherit; }
-  .radio-group { display:flex; gap:0.8rem; }
-  .radio-group label { flex:1; padding:0.55rem; text-align:center; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.85rem; transition:all 0.15s; }
-  .radio-group input[type=radio] { display:none; }
-  .radio-group input:checked + label { border-color:var(--accent2); background:rgba(88,166,255,0.1); color:var(--accent2); }
-  #rt-arena { height:220px; border:2px dashed var(--border); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; transition:background 0.2s; }
-  #rt-arena.waiting { background:rgba(88,166,255,0.06); }
-  #rt-arena.ready { background:rgba(63,185,80,0.15); border-color:var(--accent); }
-  #rt-arena p { font-size:1.1rem; color:var(--muted); pointer-events:none; }
-  .rt-trial { display:inline-block; padding:0.2rem 0.6rem; background:var(--surface); border-radius:6px; font-size:0.8rem; margin:0.2rem; border:1px solid var(--border); }
-  #voice-passage { background:var(--surface); border-left:3px solid var(--accent2); padding:1rem 1.2rem; border-radius:8px; font-style:italic; margin-bottom:1rem; line-height:1.7; font-size:0.95rem; }
-  #voice-controls { display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap; }
-  #voice-status { font-size:0.85rem; color:var(--muted); }
-  .recording-dot { display:inline-block; width:8px; height:8px; background:var(--danger); border-radius:50%; animation:pulse 1s infinite; margin-right:4px; }
-  @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.3;} }
-  #voice-features { margin-top:1rem; font-size:0.82rem; color:var(--muted); }
-  .emotion-bar-wrap { margin:0.4rem 0; }
-  .emotion-label { display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:2px; }
-  .emotion-bar { height:8px; border-radius:4px; transition:width 0.5s; }
-  .face-info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.6rem; margin-bottom:1rem; }
-  .face-info-card { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem; text-align:center; }
-  .face-info-card .val { font-size:1.1rem; font-weight:700; color:var(--accent2); }
-  .face-info-card .lbl { font-size:0.7rem; color:var(--muted); }
+  .progress-bar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:2rem;
+    position:relative;
+  }
+
+  .progress-bar::before {
+    content:'';
+    position:absolute;
+    top:50%;
+    left:0;
+    right:0;
+    height:2px;
+    background:var(--border);
+    z-index:0;
+  }
+
+  .step-dot {
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.8rem;
+    font-weight:600;
+    z-index:1;
+    border:2px solid var(--border);
+    background:var(--bg);
+    transition:all 0.3s;
+  }
+
+  .step-dot.active {
+    border-color:var(--accent2);
+    color:var(--accent2);
+  }
+
+  .step-dot.done {
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#000;
+  }
+
+  .step-panel {
+    display:none;
+  }
+
+  .step-panel.active {
+    display:block;
+    animation:fadeIn 0.3s;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity:0;
+      transform:translateY(8px);
+    }
+    to {
+      opacity:1;
+      transform:none;
+    }
+  }
+
+  .step-title {
+    font-family:'DM Serif Display',serif;
+    font-size:1.5rem;
+    margin-bottom:0.4rem;
+  }
+
+  .step-sub {
+    color:var(--muted);
+    font-size:0.9rem;
+    margin-bottom:1.5rem;
+  }
+
+  .q-item {
+    margin-bottom:1.2rem;
+  }
+
+  .q-item label {
+    display:block;
+    font-size:0.9rem;
+    margin-bottom:0.4rem;
+  }
+
+  .q-item input[type=number] {
+    width:100%;
+    padding:0.55rem 0.75rem;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color:var(--text);
+    font-size:0.9rem;
+    font-family:inherit;
+  }
+
+  .radio-group {
+    display:flex;
+    gap:0.8rem;
+  }
+
+  .radio-group label {
+    flex:1;
+    padding:0.55rem;
+    text-align:center;
+    border:1px solid var(--border);
+    border-radius:8px;
+    cursor:pointer;
+    font-size:0.85rem;
+    transition:all 0.15s;
+  }
+
+  .radio-group input[type=radio] {
+    display:none;
+  }
+
+  .radio-group input:checked + label {
+    border-color:var(--accent2);
+    background:rgba(88,166,255,0.1);
+    color:var(--accent2);
+  }
+
+  #rt-arena {
+    height:220px;
+    border:2px dashed var(--border);
+    border-radius:var(--radius);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+    transition:background 0.2s;
+  }
+
+  #rt-arena.waiting {
+    background:rgba(88,166,255,0.06);
+  }
+
+  #rt-arena.ready {
+    background:rgba(63,185,80,0.15);
+    border-color:var(--accent);
+  }
+
+  #rt-arena p {
+    font-size:1.1rem;
+    color:var(--muted);
+    pointer-events:none;
+  }
+
+  .rt-trial {
+    display:inline-block;
+    padding:0.2rem 0.6rem;
+    background:var(--surface);
+    border-radius:6px;
+    font-size:0.8rem;
+    margin:0.2rem;
+    border:1px solid var(--border);
+  }
+
+  #voice-passage {
+    background:var(--surface);
+    border-left:3px solid var(--accent2);
+    padding:1rem 1.2rem;
+    border-radius:8px;
+    font-style:italic;
+    margin-bottom:1rem;
+    line-height:1.7;
+    font-size:0.95rem;
+  }
+
+  #voice-controls {
+    display:flex;
+    gap:0.8rem;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  #voice-status {
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+
+  .recording-dot {
+    display:inline-block;
+    width:8px;
+    height:8px;
+    background:var(--danger);
+    border-radius:50%;
+    animation:pulse 1s infinite;
+    margin-right:4px;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; }
+    50% { opacity:0.3; }
+  }
+
+  #voice-features {
+    margin-top:1rem;
+    font-size:0.82rem;
+    color:var(--muted);
+  }
+
+  .emotion-bar-wrap {
+    margin:0.4rem 0;
+  }
+
+  .emotion-label {
+    display:flex;
+    justify-content:space-between;
+    font-size:0.8rem;
+    margin-bottom:2px;
+  }
+
+  .emotion-bar {
+    height:8px;
+    border-radius:4px;
+    transition:width 0.5s;
+  }
+
+  .face-info-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:0.6rem;
+    margin-bottom:1rem;
+  }
+
+  .face-info-card {
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:0.6rem;
+    text-align:center;
+  }
+
+  .face-info-card .val {
+    font-size:1.1rem;
+    font-weight:700;
+    color:var(--accent2);
+  }
+
+  .face-info-card .lbl {
+    font-size:0.7rem;
+    color:var(--muted);
+  }
+
+  #face-video {
+    background:#000;
+    max-width:100%;
+  }
+
+  #face-canvas {
+    max-width:100%;
+  }
+
+  .camera-error {
+    margin-top:0.8rem;
+    padding:0.7rem;
+    border-radius:8px;
+    background:rgba(248,81,73,0.08);
+    border:1px solid rgba(248,81,73,0.25);
+    color:var(--muted);
+    font-size:0.8rem;
+  }
 </style>
 {% endblock %}
 
+
 {% block content %}
 <main>
-  <h1 class="step-title" style="margin-bottom:0.2rem">Health Screening</h1>
-  <p class="step-sub">Complete all four modules to receive your personalised risk profile.</p>
+
+  <h1 class="step-title" style="margin-bottom:0.2rem">
+    Health Screening
+  </h1>
+
+  <p class="step-sub">
+    Complete all four modules to receive your personalised risk profile.
+  </p>
 
   <div class="progress-bar">
     <div class="step-dot active" id="dot-1">1</div>
@@ -54,265 +292,1761 @@
     <div class="step-dot" id="dot-5">✓</div>
   </div>
 
-  <!-- Step 1: Questionnaire -->
+
+  <!-- =====================================================
+       STEP 1 — QUESTIONNAIRE
+       ===================================================== -->
+
   <div class="step-panel active card" id="step-1">
-    <h2 class="step-title">📋 Health Questionnaire</h2>
-    <p class="step-sub">Answer honestly — all data stays on your device until you submit.</p>
-    <div id="q-form"><p style="color:var(--muted)">Loading questions…</p></div>
+
+    <h2 class="step-title">
+      📋 Health Questionnaire
+    </h2>
+
+    <p class="step-sub">
+      Answer honestly — all data stays on your device until you submit.
+    </p>
+
+    <div id="q-form">
+      <p style="color:var(--muted)">
+        Loading questions…
+      </p>
+    </div>
+
     <br/>
-    <div class="disclaimer">This questionnaire screens for risk indicators only and is not a diagnostic tool.</div>
+
+    <div class="disclaimer">
+      This questionnaire screens for risk indicators only and is not a diagnostic tool.
+    </div>
+
     <br/>
-    <button class="btn btn-primary" onclick="submitQuestionnaire()">Next: Reaction Time Test →</button>
+
+    <button
+      class="btn btn-primary"
+      onclick="submitQuestionnaire()"
+    >
+      Next: Reaction Time Test →
+    </button>
+
   </div>
 
-  <!-- Step 2: Reaction Time -->
+
+  <!-- =====================================================
+       STEP 2 — REACTION TIME
+       ===================================================== -->
+
   <div class="step-panel card" id="step-2">
-    <h2 class="step-title">⚡ Reaction Time Test</h2>
-    <p class="step-sub">Tap the box as soon as it turns green. Complete 8 trials.</p>
-    <div id="rt-arena" class="waiting" onclick="rtTap()"><p id="rt-msg">Click here to start</p></div>
-    <div id="rt-results" style="margin-top:1rem"></div>
+
+    <h2 class="step-title">
+      ⚡ Reaction Time Test
+    </h2>
+
+    <p class="step-sub">
+      Tap the box as soon as it turns green. Complete 8 trials.
+    </p>
+
+    <div
+      id="rt-arena"
+      class="waiting"
+      onclick="rtTap()"
+    >
+      <p id="rt-msg">
+        Click here to start
+      </p>
+    </div>
+
+    <div
+      id="rt-results"
+      style="margin-top:1rem"
+    ></div>
+
     <br/>
-    <button class="btn btn-secondary" onclick="skipRT()" style="margin-right:0.5rem">Skip this test</button>
-    <button class="btn btn-primary" id="rt-next-btn" style="display:none" onclick="goToStep(3)">Next: Voice Analysis →</button>
+
+    <button
+      class="btn btn-secondary"
+      onclick="skipRT()"
+      style="margin-right:0.5rem"
+    >
+      Skip this test
+    </button>
+
+    <button
+      class="btn btn-primary"
+      id="rt-next-btn"
+      style="display:none"
+      onclick="goToStep(3)"
+    >
+      Next: Voice Analysis →
+    </button>
+
   </div>
 
-  <!-- Step 3: Voice -->
+
+  <!-- =====================================================
+       STEP 3 — VOICE
+       ===================================================== -->
+
   <div class="step-panel card" id="step-3">
-    <h2 class="step-title">🎙️ Voice Analysis</h2>
-    <p class="step-sub">Read the passage below aloud in your natural voice.</p>
-    <div id="voice-passage">"The autumn leaves drifted slowly to the ground, each one a quiet reminder of the changing season. I walked through the park, listening to the gentle rustling of the wind through the trees, feeling a calm sense of peace as the cool air brushed against my face."</div>
+
+    <h2 class="step-title">
+      🎙️ Voice Analysis
+    </h2>
+
+    <p class="step-sub">
+      Read the passage below aloud in your natural voice.
+    </p>
+
+    <div id="voice-passage">
+      "The autumn leaves drifted slowly to the ground, each one a quiet reminder of the changing season. I walked through the park, listening to the gentle rustling of the wind through the trees, feeling a calm sense of peace as the cool air brushed against my face."
+    </div>
+
     <div id="voice-controls">
-      <button class="btn btn-primary" id="record-btn" onclick="toggleRecording()">🔴 Start Recording</button>
-      <span id="voice-status">Ready when you are.</span>
+
+      <button
+        class="btn btn-primary"
+        id="record-btn"
+        onclick="toggleRecording()"
+      >
+        🔴 Start Recording
+      </button>
+
+      <span id="voice-status">
+        Ready when you are.
+      </span>
+
     </div>
+
     <div id="voice-features"></div>
+
     <br/>
-    <button class="btn btn-secondary" onclick="skipVoice()" style="margin-right:0.5rem">Skip this test</button>
-    <button class="btn btn-primary" id="voice-next-btn" style="display:none" onclick="goToStep(4)">Next: Facial Analysis →</button>
+
+    <button
+      class="btn btn-secondary"
+      onclick="skipVoice()"
+      style="margin-right:0.5rem"
+    >
+      Skip this test
+    </button>
+
+    <button
+      class="btn btn-primary"
+      id="voice-next-btn"
+      style="display:none"
+      onclick="goToStep(4)"
+    >
+      Next: Facial Analysis →
+    </button>
+
   </div>
 
-  <!-- Step 4: Facial Analysis -->
+
+  <!-- =====================================================
+       STEP 4 — FACIAL ANALYSIS
+       ===================================================== -->
+
   <div class="step-panel card" id="step-4">
-    <h2 class="step-title">📸 Facial Expression Analysis</h2>
-    <p class="step-sub">Click Start Camera and look naturally at the screen for 3 seconds.</p>
+
+    <h2 class="step-title">
+      📸 Facial Expression Analysis
+    </h2>
+
+    <p class="step-sub">
+      Click Start Camera and look naturally at the screen for 3 seconds.
+    </p>
+
     <div style="text-align:center">
-      <video id="face-video" width="320" height="240" autoplay muted style="border-radius:var(--radius);border:2px solid var(--border);display:none"></video>
-      <canvas id="face-canvas" width="320" height="240" style="border-radius:var(--radius);border:2px solid var(--accent);display:none"></canvas>
+
+      <video
+        id="face-video"
+        width="320"
+        height="240"
+        autoplay
+        muted
+        playsinline
+        style="
+          border-radius:var(--radius);
+          border:2px solid var(--border);
+          display:none;
+        "
+      ></video>
+
+      <canvas
+        id="face-canvas"
+        width="320"
+        height="240"
+        style="
+          border-radius:var(--radius);
+          border:2px solid var(--accent);
+          display:none;
+        "
+      ></canvas>
+
     </div>
-    <div id="face-status" style="margin-top:1rem;font-size:0.85rem;color:var(--muted);text-align:center">Click Start Camera to begin</div>
+
+    <div
+      id="face-status"
+      style="
+        margin-top:1rem;
+        font-size:0.85rem;
+        color:var(--muted);
+        text-align:center;
+      "
+    >
+      Click Start Camera to begin
+    </div>
+
+    <div id="face-error"></div>
+
     <div id="face-results"></div>
+
     <br/>
+
     <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
-      <button class="btn btn-secondary" onclick="skipFace()">Skip this test</button>
-      <button class="btn btn-primary" id="face-start-btn" onclick="startFaceAnalysis()">📷 Start Camera</button>
-      <button class="btn btn-primary" id="face-next-btn" style="display:none" onclick="computeAndShowResults()">View Results →</button>
+
+      <button
+        class="btn btn-secondary"
+        onclick="skipFace()"
+      >
+        Skip this test
+      </button>
+
+      <button
+        class="btn btn-primary"
+        id="face-start-btn"
+        onclick="startFaceAnalysis()"
+      >
+        📷 Start Camera
+      </button>
+
+      <button
+        class="btn btn-primary"
+        id="face-next-btn"
+        style="display:none"
+        onclick="computeAndShowResults()"
+      >
+        View Results →
+      </button>
+
     </div>
+
   </div>
 
-  <!-- Step 5: Loading -->
-  <div class="step-panel card" id="step-5" style="text-align:center;padding:3rem">
-    <div style="font-size:2.5rem;margin-bottom:1rem">⏳</div>
-    <h2 class="step-title">Computing your risk profile…</h2>
-    <p style="color:var(--muted)">Combining all signals — this takes just a moment.</p>
+
+  <!-- =====================================================
+       STEP 5 — LOADING
+       ===================================================== -->
+
+  <div
+    class="step-panel card"
+    id="step-5"
+    style="text-align:center;padding:3rem"
+  >
+
+    <div style="font-size:2.5rem;margin-bottom:1rem">
+      ⏳
+    </div>
+
+    <h2 class="step-title">
+      Computing your risk profile…
+    </h2>
+
+    <p style="color:var(--muted)">
+      Combining all signals — this takes just a moment.
+    </p>
+
   </div>
+
 </main>
 {% endblock %}
 
+
 {% block scripts %}
+
 <script>
-const state = { currentStep:1, qAnswers:{}, rtTimes:[], voiceFeatures:{}, faceResult:null, qResult:null, rtResult:null, voiceResult:null };
+
+/* =========================================================
+   GLOBAL STATE
+   ========================================================= */
+
+const state = {
+  currentStep: 1,
+
+  qAnswers: {},
+
+  rtTimes: [],
+
+  voiceFeatures: {},
+
+  faceResult: null,
+
+  qResult: null,
+
+  rtResult: null,
+
+  voiceResult: null
+};
+
+
+/* =========================================================
+   QUESTIONS
+   ========================================================= */
 
 const QUESTIONS = [
-  { id:"sleep_hours",     text:"How many hours do you sleep per night?",                     type:"number", min:0, max:24 },
-  { id:"sleep_quality",   text:"Rate your sleep quality (1=very poor, 5=excellent)",         type:"scale" },
-  { id:"wake_often",      text:"Do you wake up multiple times during the night?",            type:"yesno" },
-  { id:"mood_low",        text:"Have you felt persistently sad or hopeless recently?",       type:"yesno" },
-  { id:"anxiety_level",   text:"How often do you feel anxious or overwhelmed? (1-5)",        type:"scale" },
-  { id:"concentration",   text:"Do you have difficulty concentrating on tasks?",             type:"yesno" },
-  { id:"thirst",          text:"Do you experience excessive thirst or frequent urination?",  type:"yesno" },
-  { id:"fatigue",         text:"Do you feel unusually fatigued even after rest?",            type:"yesno" },
-  { id:"family_diabetes", text:"Does anyone in your immediate family have diabetes?",        type:"yesno" },
-  { id:"chest_discomfort",text:"Do you experience chest tightness or shortness of breath?", type:"yesno" },
-  { id:"stress_level",    text:"Rate your daily stress level (1=low, 5=very high)",          type:"scale" },
-  { id:"exercise",        text:"How many days per week do you exercise for 30+ minutes?",    type:"number", min:0, max:7 },
-  { id:"tremor",          text:"Have you noticed any trembling in your hands or limbs?",     type:"yesno" },
-  { id:"memory_issues",   text:"Do you frequently forget recent events or words?",           type:"yesno" },
-  { id:"coordination",    text:"Do you sometimes feel unsteady or have balance issues?",     type:"yesno" },
+
+  {
+    id:"sleep_hours",
+    text:"How many hours do you sleep per night?",
+    type:"number",
+    min:0,
+    max:24
+  },
+
+  {
+    id:"sleep_quality",
+    text:"Rate your sleep quality (1=very poor, 5=excellent)",
+    type:"scale"
+  },
+
+  {
+    id:"wake_often",
+    text:"Do you wake up multiple times during the night?",
+    type:"yesno"
+  },
+
+  {
+    id:"mood_low",
+    text:"Have you felt persistently sad or hopeless recently?",
+    type:"yesno"
+  },
+
+  {
+    id:"anxiety_level",
+    text:"How often do you feel anxious or overwhelmed? (1-5)",
+    type:"scale"
+  },
+
+  {
+    id:"concentration",
+    text:"Do you have difficulty concentrating on tasks?",
+    type:"yesno"
+  },
+
+  {
+    id:"thirst",
+    text:"Do you experience excessive thirst or frequent urination?",
+    type:"yesno"
+  },
+
+  {
+    id:"fatigue",
+    text:"Do you feel unusually fatigued even after rest?",
+    type:"yesno"
+  },
+
+  {
+    id:"family_diabetes",
+    text:"Does anyone in your immediate family have diabetes?",
+    type:"yesno"
+  },
+
+  {
+    id:"chest_discomfort",
+    text:"Do you experience chest tightness or shortness of breath?",
+    type:"yesno"
+  },
+
+  {
+    id:"stress_level",
+    text:"Rate your daily stress level (1=low, 5=very high)",
+    type:"scale"
+  },
+
+  {
+    id:"exercise",
+    text:"How many days per week do you exercise for 30+ minutes?",
+    type:"number",
+    min:0,
+    max:7
+  },
+
+  {
+    id:"tremor",
+    text:"Have you noticed any trembling in your hands or limbs?",
+    type:"yesno"
+  },
+
+  {
+    id:"memory_issues",
+    text:"Do you frequently forget recent events or words?",
+    type:"yesno"
+  },
+
+  {
+    id:"coordination",
+    text:"Do you sometimes feel unsteady or have balance issues?",
+    type:"yesno"
+  }
+
 ];
 
+
+/* =========================================================
+   QUESTIONNAIRE
+   ========================================================= */
+
 function renderQuestionnaire() {
-  document.getElementById('q-form').innerHTML = QUESTIONS.map(q => {
-    if (q.type==='yesno') return `<div class="q-item"><label>${q.text}</label><div class="radio-group"><input type="radio" name="${q.id}" id="${q.id}_y" value="yes" onchange="setAnswer('${q.id}','yes')"><label for="${q.id}_y">Yes</label><input type="radio" name="${q.id}" id="${q.id}_n" value="no" onchange="setAnswer('${q.id}','no')"><label for="${q.id}_n">No</label></div></div>`;
-    if (q.type==='scale') return `<div class="q-item"><label>${q.text}</label><div class="radio-group">${[1,2,3,4,5].map(v=>`<input type="radio" name="${q.id}" id="${q.id}_${v}" value="${v}" onchange="setAnswer('${q.id}',${v})"><label for="${q.id}_${v}">${v}</label>`).join('')}</div></div>`;
-    return `<div class="q-item"><label>${q.text}</label><input type="number" min="${q.min||0}" max="${q.max||99}" placeholder="Enter value" onchange="setAnswer('${q.id}',this.value)" /></div>`;
-  }).join('');
+
+  document.getElementById('q-form').innerHTML =
+    QUESTIONS.map(q => {
+
+      if(q.type === 'yesno') {
+
+        return `
+          <div class="q-item">
+
+            <label>${q.text}</label>
+
+            <div class="radio-group">
+
+              <input
+                type="radio"
+                name="${q.id}"
+                id="${q.id}_y"
+                value="yes"
+                onchange="setAnswer('${q.id}','yes')"
+              >
+
+              <label for="${q.id}_y">
+                Yes
+              </label>
+
+              <input
+                type="radio"
+                name="${q.id}"
+                id="${q.id}_n"
+                value="no"
+                onchange="setAnswer('${q.id}','no')"
+              >
+
+              <label for="${q.id}_n">
+                No
+              </label>
+
+            </div>
+
+          </div>
+        `;
+
+      }
+
+
+      if(q.type === 'scale') {
+
+        return `
+          <div class="q-item">
+
+            <label>${q.text}</label>
+
+            <div class="radio-group">
+
+              ${[1,2,3,4,5].map(v => `
+
+                <input
+                  type="radio"
+                  name="${q.id}"
+                  id="${q.id}_${v}"
+                  value="${v}"
+                  onchange="setAnswer('${q.id}',${v})"
+                >
+
+                <label for="${q.id}_${v}">
+                  ${v}
+                </label>
+
+              `).join('')}
+
+            </div>
+
+          </div>
+        `;
+
+      }
+
+
+      return `
+        <div class="q-item">
+
+          <label>${q.text}</label>
+
+          <input
+            type="number"
+            min="${q.min || 0}"
+            max="${q.max || 99}"
+            placeholder="Enter value"
+            onchange="setAnswer('${q.id}',this.value)"
+          />
+
+        </div>
+      `;
+
+    }).join('');
+
 }
 
-function setAnswer(id,val) { state.qAnswers[id]=val; }
+
+function setAnswer(id,val) {
+
+  state.qAnswers[id] = val;
+
+}
+
 
 async function submitQuestionnaire() {
-  QUESTIONS.forEach(q=>{ if(state.qAnswers[q.id]===undefined) state.qAnswers[q.id]=q.type==='yesno'?'no':q.type==='scale'?3:0; });
-  const res=await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.qAnswers)});
-  state.qResult=await res.json();
-  goToStep(2);
-}
 
-// Reaction Time
-let rtState='idle',rtStart=0,rtTimeout=null;
-function rtTap() {
-  const arena=document.getElementById('rt-arena'),msg=document.getElementById('rt-msg');
-  if (rtState==='idle') {
-    rtState='waiting'; arena.className='waiting'; msg.textContent='Get ready…';
-    rtTimeout=setTimeout(()=>{ rtState='ready'; arena.className='ready'; msg.textContent='TAP NOW!'; rtStart=performance.now(); },1500+Math.random()*3000);
-  } else if (rtState==='waiting') {
-    clearTimeout(rtTimeout); rtState='idle'; msg.textContent='Too early! Click to try again.'; arena.className='waiting';
-  } else if (rtState==='ready') {
-    state.rtTimes.push(Math.round(performance.now()-rtStart)); rtState='idle'; arena.className='waiting';
-    document.getElementById('rt-results').innerHTML=state.rtTimes.map((t,i)=>`<span class="rt-trial">Trial ${i+1}: ${t} ms</span>`).join('');
-    if (state.rtTimes.length>=8) { msg.textContent='All 8 trials done! ✓'; document.getElementById('rt-next-btn').style.display='inline-flex'; }
-    else msg.textContent=`Trial ${state.rtTimes.length}/8 done — click for next`;
-  }
-}
-async function skipRT() { state.rtResult={skipped:true,score:0,flags:[]}; goToStep(3); }
+  QUESTIONS.forEach(q => {
 
-// Voice
-let mediaRecorder=null,audioCtx=null,analyser=null,isRecording=false,pitchSamples=[],energySamples=[],recordingStart=0;
-async function toggleRecording() { if(!isRecording) await startRecording(); else stopRecording(); }
-async function startRecording() {
+    if(state.qAnswers[q.id] === undefined) {
+
+      state.qAnswers[q.id] =
+        q.type === 'yesno'
+          ? 'no'
+          : q.type === 'scale'
+            ? 3
+            : 0;
+
+    }
+
+  });
+
+
   try {
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    audioCtx=new AudioContext(); analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
-    audioCtx.createMediaStreamSource(stream).connect(analyser);
-    mediaRecorder=new MediaRecorder(stream); pitchSamples=[]; energySamples=[];
-    mediaRecorder.start(); isRecording=true; recordingStart=Date.now();
-    document.getElementById('record-btn').innerHTML='⏹ Stop Recording';
-    document.getElementById('voice-status').innerHTML='<span class="recording-dot"></span> Recording… read the passage aloud';
-    collectAudioFeatures();
-  } catch(e) { document.getElementById('voice-status').textContent='Microphone access denied.'; }
-}
-function collectAudioFeatures() {
-  if(!isRecording) return;
-  const buf=new Float32Array(analyser.fftSize); analyser.getFloatTimeDomainData(buf);
-  energySamples.push(Math.sqrt(buf.reduce((s,v)=>s+v*v,0)/buf.length));
-  let zc=0; for(let i=1;i<buf.length;i++) if((buf[i]>=0)!==(buf[i-1]>=0)) zc++;
-  const p=(zc/2)*(audioCtx.sampleRate/buf.length); if(p>60&&p<400) pitchSamples.push(p);
-  setTimeout(collectAudioFeatures,100);
-}
-function stopRecording() {
-  mediaRecorder.stop(); isRecording=false; mediaRecorder.stream.getTracks().forEach(t=>t.stop());
-  const dur=(Date.now()-recordingStart)/1000;
-  const avgE=energySamples.length?energySamples.reduce((a,b)=>a+b,0)/energySamples.length:0;
-  const avgP=pitchSamples.length?pitchSamples.reduce((a,b)=>a+b,0)/pitchSamples.length:150;
-  const stdP=pitchSamples.length>1?Math.sqrt(pitchSamples.reduce((s,p)=>s+(p-avgP)**2,0)/pitchSamples.length):20;
-  state.voiceFeatures={pitch_mean_hz:Math.round(avgP),pitch_std_hz:Math.round(stdP),energy_mean:parseFloat(avgE.toFixed(4)),duration_sec:Math.round(dur)};
-  document.getElementById('record-btn').innerHTML='🔴 Re-record';
-  document.getElementById('voice-status').textContent='Recording complete ✓';
-  document.getElementById('voice-features').innerHTML=`<br/>Detected: pitch ~${state.voiceFeatures.pitch_mean_hz} Hz | energy ${state.voiceFeatures.energy_mean} | ${dur.toFixed(1)}s`;
-  document.getElementById('voice-next-btn').style.display='inline-flex';
-}
-async function skipVoice() { state.voiceResult={skipped:true,score:0,flags:[]}; goToStep(4); }
 
-// Final compute
-async function computeAndShowResults() {
-  goToStep(5);
-  if (!state.rtResult&&state.rtTimes.length>=3) {
-    const res=await fetch('/api/reaction-time',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({times:state.rtTimes})});
-    state.rtResult=await res.json();
-  } else if(!state.rtResult) state.rtResult={score:0,flags:[]};
-  if (!state.voiceResult&&Object.keys(state.voiceFeatures).length>0) {
-    const res=await fetch('/api/voice-analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.voiceFeatures)});
-    state.voiceResult=await res.json();
-  } else if(!state.voiceResult) state.voiceResult={score:0,flags:[]};
-  const payload={
-    questionnaire_scores:state.qResult?.scores||{},questionnaire_flags:state.qResult?.flags||[],
-    reaction_time_score:state.rtResult?.score||0,reaction_time_flags:state.rtResult?.flags||[],
-    voice_score:state.voiceResult?.score||0,voice_flags:state.voiceResult?.flags||[],
-    face_mental_score:state.faceResult?.mental_score||0,
-    face_cardio_score:state.faceResult?.cardiovascular_score||0,
-    face_flags:state.faceResult?.flags||[],
+    const res = await fetch(
+      '/api/questionnaire',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(state.qAnswers)
+      }
+    );
+
+    if(!res.ok) {
+      throw new Error('Questionnaire request failed');
+    }
+
+    state.qResult = await res.json();
+
+    goToStep(2);
+
+  } catch(e) {
+
+    alert('Could not submit questionnaire. Please try again.');
+
+    console.error(e);
+
+  }
+
+}
+
+
+/* =========================================================
+   REACTION TIME
+   ========================================================= */
+
+let rtState = 'idle';
+
+let rtStart = 0;
+
+let rtTimeout = null;
+
+
+function rtTap() {
+
+  const arena =
+    document.getElementById('rt-arena');
+
+  const msg =
+    document.getElementById('rt-msg');
+
+
+  if(rtState === 'idle') {
+
+    rtState = 'waiting';
+
+    arena.className = 'waiting';
+
+    msg.textContent = 'Get ready…';
+
+
+    rtTimeout = setTimeout(() => {
+
+      rtState = 'ready';
+
+      arena.className = 'ready';
+
+      msg.textContent = 'TAP NOW!';
+
+      rtStart = performance.now();
+
+    }, 1500 + Math.random() * 3000);
+
+  }
+
+
+  else if(rtState === 'waiting') {
+
+    clearTimeout(rtTimeout);
+
+    rtState = 'idle';
+
+    msg.textContent =
+      'Too early! Click to try again.';
+
+    arena.className = 'waiting';
+
+  }
+
+
+  else if(rtState === 'ready') {
+
+    state.rtTimes.push(
+      Math.round(performance.now() - rtStart)
+    );
+
+    rtState = 'idle';
+
+    arena.className = 'waiting';
+
+
+    document.getElementById('rt-results').innerHTML =
+      state.rtTimes.map((t,i) =>
+        `<span class="rt-trial">
+          Trial ${i+1}: ${t} ms
+        </span>`
+      ).join('');
+
+
+    if(state.rtTimes.length >= 8) {
+
+      msg.textContent =
+        'All 8 trials done! ✓';
+
+      document.getElementById(
+        'rt-next-btn'
+      ).style.display = 'inline-flex';
+
+    } else {
+
+      msg.textContent =
+        `Trial ${state.rtTimes.length}/8 done — click for next`;
+
+    }
+
+  }
+
+}
+
+
+async function skipRT() {
+
+  state.rtResult = {
+    skipped:true,
+    score:0,
+    flags:[]
   };
-  const res=await fetch('/api/compute-risk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-  const riskProfile=await res.json();
-  sessionStorage.setItem('riskProfile',JSON.stringify(riskProfile));
-  if(state.faceResult&&!state.faceResult.skipped) sessionStorage.setItem('faceResult',JSON.stringify(state.faceResult));
-  window.location.href='/results';
+
+  goToStep(3);
+
 }
 
-function goToStep(n) {
-  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById(`step-${n}`).classList.add('active');
-  for(let i=1;i<=5;i++){const d=document.getElementById(`dot-${i}`);d.className='step-dot'+(i<n?' done':i===n?' active':'');}
-  state.currentStep=n; window.scrollTo(0,0);
+
+/* =========================================================
+   VOICE
+   ========================================================= */
+
+let mediaRecorder = null;
+
+let audioCtx = null;
+
+let analyser = null;
+
+let isRecording = false;
+
+let pitchSamples = [];
+
+let energySamples = [];
+
+let recordingStart = 0;
+
+
+async function toggleRecording() {
+
+  if(!isRecording) {
+
+    await startRecording();
+
+  } else {
+
+    stopRecording();
+
+  }
+
 }
 
-renderQuestionnaire();
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-<script>
-const MODEL_URL='https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
-let faceModelsLoaded=false;
+async function startRecording() {
 
-async function loadFaceModels() {
-  if(faceModelsLoaded) return;
-  document.getElementById('face-status').textContent='Loading face detection models…';
-  await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-  await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-  faceModelsLoaded=true;
+  try {
+
+    const stream =
+      await navigator.mediaDevices.getUserMedia({
+        audio:true
+      });
+
+
+    audioCtx = new AudioContext();
+
+    analyser = audioCtx.createAnalyser();
+
+    analyser.fftSize = 2048;
+
+
+    audioCtx
+      .createMediaStreamSource(stream)
+      .connect(analyser);
+
+
+    mediaRecorder =
+      new MediaRecorder(stream);
+
+
+    pitchSamples = [];
+
+    energySamples = [];
+
+
+    mediaRecorder.start();
+
+    isRecording = true;
+
+    recordingStart = Date.now();
+
+
+    document.getElementById(
+      'record-btn'
+    ).innerHTML = '⏹ Stop Recording';
+
+
+    document.getElementById(
+      'voice-status'
+    ).innerHTML =
+      '<span class="recording-dot"></span> Recording… read the passage aloud';
+
+
+    collectAudioFeatures();
+
+  } catch(e) {
+
+    console.error(e);
+
+    document.getElementById(
+      'voice-status'
+    ).textContent =
+      'Microphone access denied.';
+
+  }
+
 }
+
+
+function collectAudioFeatures() {
+
+  if(!isRecording) return;
+
+
+  const buf =
+    new Float32Array(analyser.fftSize);
+
+
+  analyser.getFloatTimeDomainData(buf);
+
+
+  energySamples.push(
+    Math.sqrt(
+      buf.reduce(
+        (s,v) => s + v*v,
+        0
+      ) / buf.length
+    )
+  );
+
+
+  let zc = 0;
+
+
+  for(let i=1;i<buf.length;i++) {
+
+    if(
+      (buf[i] >= 0) !==
+      (buf[i-1] >= 0)
+    ) {
+
+      zc++;
+
+    }
+
+  }
+
+
+  const p =
+    (zc/2) *
+    (audioCtx.sampleRate / buf.length);
+
+
+  if(p > 60 && p < 400) {
+
+    pitchSamples.push(p);
+
+  }
+
+
+  setTimeout(
+    collectAudioFeatures,
+    100
+  );
+
+}
+
+
+function stopRecording() {
+
+  mediaRecorder.stop();
+
+  isRecording = false;
+
+
+  mediaRecorder
+    .stream
+    .getTracks()
+    .forEach(t => t.stop());
+
+
+  const dur =
+    (Date.now() - recordingStart) / 1000;
+
+
+  const avgE =
+    energySamples.length
+      ? energySamples.reduce(
+          (a,b) => a+b,
+          0
+        ) / energySamples.length
+      : 0;
+
+
+  const avgP =
+    pitchSamples.length
+      ? pitchSamples.reduce(
+          (a,b) => a+b,
+          0
+        ) / pitchSamples.length
+      : 150;
+
+
+  const stdP =
+    pitchSamples.length > 1
+      ? Math.sqrt(
+          pitchSamples.reduce(
+            (s,p) =>
+              s + (p-avgP)**2,
+            0
+          ) / pitchSamples.length
+        )
+      : 20;
+
+
+  state.voiceFeatures = {
+
+    pitch_mean_hz:
+      Math.round(avgP),
+
+    pitch_std_hz:
+      Math.round(stdP),
+
+    energy_mean:
+      parseFloat(avgE.toFixed(4)),
+
+    duration_sec:
+      Math.round(dur)
+
+  };
+
+
+  document.getElementById(
+    'record-btn'
+  ).innerHTML =
+    '🔴 Re-record';
+
+
+  document.getElementById(
+    'voice-status'
+  ).textContent =
+    'Recording complete ✓';
+
+
+  document.getElementById(
+    'voice-features'
+  ).innerHTML =
+    `<br/>Detected:
+     pitch ~${state.voiceFeatures.pitch_mean_hz} Hz |
+     energy ${state.voiceFeatures.energy_mean} |
+     ${dur.toFixed(1)}s`;
+
+
+  document.getElementById(
+    'voice-next-btn'
+  ).style.display =
+    'inline-flex';
+
+}
+
+
+async function skipVoice() {
+
+  state.voiceResult = {
+    skipped:true,
+    score:0,
+    flags:[]
+  };
+
+  goToStep(4);
+
+}
+
+
+/* =========================================================
+   FACE API
+   ========================================================= */
+
+const MODEL_URL =
+  'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
+
+let faceModelsLoaded = false;
+
+
+/*
+   IMPORTANT:
+   Camera is requested BEFORE loading the models.
+*/
 
 async function startFaceAnalysis() {
-  const btn=document.getElementById('face-start-btn');
-  btn.disabled=true; btn.textContent='⏳ Loading…';
-  await loadFaceModels();
-  const video=document.getElementById('face-video');
+
+  const btn =
+    document.getElementById(
+      'face-start-btn'
+    );
+
+  const video =
+    document.getElementById(
+      'face-video'
+    );
+
+  const status =
+    document.getElementById(
+      'face-status'
+    );
+
+  const errorBox =
+    document.getElementById(
+      'face-error'
+    );
+
+
+  btn.disabled = true;
+
+  errorBox.innerHTML = '';
+
+
+  /* -----------------------------------------
+     STEP 1 — CAMERA FIRST
+     ----------------------------------------- */
+
+  status.textContent =
+    'Requesting camera access…';
+
+
+  let stream;
+
+
   try {
-    const stream=await navigator.mediaDevices.getUserMedia({video:true});
-    video.srcObject=stream; video.style.display='block';
-    document.getElementById('face-status').textContent='Look naturally at the camera… analysing in 3 seconds';
-    btn.textContent='⏳ Analysing…';
-    await new Promise(r=>setTimeout(r,3000));
-    const canvas=document.getElementById('face-canvas');
-    const ctx=canvas.getContext('2d');
-    ctx.drawImage(video,0,0,320,240);
-    canvas.style.display='block'; video.style.display='none';
-    stream.getTracks().forEach(t=>t.stop());
-    const detection=await faceapi.detectSingleFace(canvas,new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
-    if(!detection) {
-      document.getElementById('face-status').textContent='❌ No face detected. Try better lighting or click retry.';
-      btn.textContent='📷 Retry'; btn.disabled=false; canvas.style.display='none';
-      return;
+
+    if(
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ) {
+
+      throw new Error(
+        'Camera API is not available in this browser.'
+      );
+
     }
-    const expressions=detection.expressions;
-    const res=await fetch('/api/facial-analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(expressions)});
-    const data=await res.json();
-    state.faceResult=data;
-    const colors={happy:'#3fb950',sad:'#58a6ff',angry:'#f85149',fearful:'#f0883e',surprised:'#d2a8ff',disgusted:'#ffa657',neutral:'#8b949e'};
-    const emotions=data.emotions||{};
-    const sorted=Object.entries(emotions).sort((a,b)=>b[1]-a[1]);
-    document.getElementById('face-results').innerHTML=`
-      <br/>
-      <div class="face-info-grid">
-        <div class="face-info-card" style="grid-column:span 3">
-          <div class="val" style="text-transform:capitalize">${data.dominant_emotion}</div>
-          <div class="lbl">Dominant Emotion Detected</div>
-        </div>
-      </div>
-      <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:0.6rem">Emotion Breakdown</h3>
-      ${sorted.map(([emo,pct])=>`<div class="emotion-bar-wrap"><div class="emotion-label"><span style="text-transform:capitalize">${emo}</span><span>${pct.toFixed(1)}%</span></div><div style="background:var(--border);border-radius:4px;height:8px;"><div class="emotion-bar" style="width:${pct}%;background:${colors[emo]||'var(--accent2)'}"></div></div></div>`).join('')}
-    `;
-    document.getElementById('face-status').textContent='Analysis complete ✓';
-    btn.style.display='none';
-    document.getElementById('face-next-btn').style.display='inline-flex';
+
+
+    stream =
+      await navigator.mediaDevices.getUserMedia({
+        video:{
+          width:{ideal:320},
+          height:{ideal:240},
+          facingMode:'user'
+        },
+        audio:false
+      });
+
+
+    video.srcObject = stream;
+
+    video.style.display = 'inline-block';
+
+
+    try {
+
+      await video.play();
+
+    } catch(e) {
+
+      console.log(
+        'Video autoplay warning:',
+        e
+      );
+
+    }
+
+
+    status.textContent =
+      'Camera connected ✓ Loading face detection…';
+
+
   } catch(e) {
-    document.getElementById('face-status').textContent='❌ Camera access denied or error occurred.';
-    btn.textContent='📷 Retry'; btn.disabled=false;
+
+    console.error(
+      'Camera error:',
+      e
+    );
+
+
+    let message =
+      'Could not access the camera. ';
+
+
+    if(e.name === 'NotAllowedError') {
+
+      message +=
+        'Please allow camera permission for this website and try again.';
+
+    }
+
+    else if(e.name === 'NotFoundError') {
+
+      message +=
+        'No camera was found on this device.';
+
+    }
+
+    else if(e.name === 'NotReadableError') {
+
+      message +=
+        'The camera may already be in use by another application.';
+
+    }
+
+    else if(e.name === 'SecurityError') {
+
+      message +=
+        'Camera access was blocked by browser security settings.';
+
+    }
+
+    else {
+
+      message +=
+        e.message || 'Unknown camera error.';
+
+    }
+
+
+    status.textContent = '❌ Camera error';
+
+
+    errorBox.innerHTML =
+      `<div class="camera-error">
+        ${message}
+      </div>`;
+
+
+    btn.disabled = false;
+
+    btn.textContent = '📷 Retry';
+
+    return;
+
   }
+
+
+  /* -----------------------------------------
+     STEP 2 — LOAD FACE MODELS
+     ----------------------------------------- */
+
+  try {
+
+    if(!faceModelsLoaded) {
+
+      status.textContent =
+        'Camera connected ✓ Loading face models…';
+
+
+      await faceapi.nets.tinyFaceDetector.loadFromUri(
+        MODEL_URL
+      );
+
+
+      await faceapi.nets.faceExpressionNet.loadFromUri(
+        MODEL_URL
+      );
+
+
+      faceModelsLoaded = true;
+
+    }
+
+
+    /* -----------------------------------------
+       STEP 3 — ANALYSE
+       ----------------------------------------- */
+
+    status.textContent =
+      'Look naturally at the camera… analysing in 3 seconds';
+
+
+    btn.textContent =
+      '⏳ Analysing…';
+
+
+    await new Promise(
+      r => setTimeout(r,3000)
+    );
+
+
+    const canvas =
+      document.getElementById(
+        'face-canvas'
+      );
+
+
+    const ctx =
+      canvas.getContext('2d');
+
+
+    ctx.drawImage(
+      video,
+      0,
+      0,
+      320,
+      240
+    );
+
+
+    canvas.style.display =
+      'inline-block';
+
+
+    video.style.display =
+      'none';
+
+
+    stream
+      .getTracks()
+      .forEach(
+        t => t.stop()
+      );
+
+
+    video.srcObject = null;
+
+
+    /* -----------------------------------------
+       STEP 4 — FACE DETECTION
+       ----------------------------------------- */
+
+    status.textContent =
+      'Detecting facial expression…';
+
+
+    const detection =
+      await faceapi
+        .detectSingleFace(
+          canvas,
+          new faceapi.TinyFaceDetectorOptions()
+        )
+        .withFaceExpressions();
+
+
+    if(!detection) {
+
+      status.textContent =
+        '❌ No face detected. Try better lighting.';
+
+
+      btn.textContent =
+        '📷 Retry';
+
+
+      btn.disabled = false;
+
+
+      canvas.style.display =
+        'none';
+
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------
+       STEP 5 — SEND TO SERVER
+       ----------------------------------------- */
+
+    const expressions =
+      detection.expressions;
+
+
+    const res =
+      await fetch(
+        '/api/facial-analysis',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(expressions)
+        }
+      );
+
+
+    if(!res.ok) {
+
+      throw new Error(
+        'Facial analysis server request failed.'
+      );
+
+    }
+
+
+    const data =
+      await res.json();
+
+
+    state.faceResult =
+      data;
+
+
+    /* -----------------------------------------
+       STEP 6 — DISPLAY
+       ----------------------------------------- */
+
+    const colors = {
+
+      happy:'#3fb950',
+
+      sad:'#58a6ff',
+
+      angry:'#f85149',
+
+      fearful:'#f0883e',
+
+      surprised:'#d2a8ff',
+
+      disgusted:'#ffa657',
+
+      neutral:'#8b949e'
+
+    };
+
+
+    const emotions =
+      data.emotions || {};
+
+
+    const sorted =
+      Object
+        .entries(emotions)
+        .sort(
+          (a,b) => b[1] - a[1]
+        );
+
+
+    document.getElementById(
+      'face-results'
+    ).innerHTML = `
+
+      <br/>
+
+      <div class="face-info-grid">
+
+        <div
+          class="face-info-card"
+          style="grid-column:span 3"
+        >
+
+          <div
+            class="val"
+            style="text-transform:capitalize"
+          >
+            ${data.dominant_emotion}
+          </div>
+
+          <div class="lbl">
+            Dominant Emotion Detected
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <h3
+        style="
+          font-size:0.9rem;
+          font-weight:600;
+          margin-bottom:0.6rem;
+        "
+      >
+        Emotion Breakdown
+      </h3>
+
+
+      ${sorted.map(
+        ([emo,pct]) => `
+
+          <div class="emotion-bar-wrap">
+
+            <div class="emotion-label">
+
+              <span
+                style="text-transform:capitalize"
+              >
+                ${emo}
+              </span>
+
+              <span>
+                ${pct.toFixed(1)}%
+              </span>
+
+            </div>
+
+
+            <div
+              style="
+                background:var(--border);
+                border-radius:4px;
+                height:8px;
+              "
+            >
+
+              <div
+                class="emotion-bar"
+                style="
+                  width:${pct}%;
+                  background:${colors[emo] || 'var(--accent2)'};
+                "
+              ></div>
+
+            </div>
+
+          </div>
+
+        `
+      ).join('')}
+
+    `;
+
+
+    status.textContent =
+      'Analysis complete ✓';
+
+
+    btn.style.display =
+      'none';
+
+
+    document.getElementById(
+      'face-next-btn'
+    ).style.display =
+      'inline-flex';
+
+
+  } catch(e) {
+
+    console.error(
+      'Facial analysis error:',
+      e
+    );
+
+
+    if(stream) {
+
+      stream
+        .getTracks()
+        .forEach(
+          t => t.stop()
+        );
+
+    }
+
+
+    video.srcObject = null;
+
+    video.style.display = 'none';
+
+
+    status.textContent =
+      '❌ Facial analysis error';
+
+
+    errorBox.innerHTML =
+      `<div class="camera-error">
+        ${e.message || 'Something went wrong while analysing the camera image.'}
+      </div>`;
+
+
+    btn.textContent =
+      '📷 Retry';
+
+
+    btn.disabled = false;
+
+  }
+
 }
 
+
+/* =========================================================
+   SKIP FACE
+   ========================================================= */
+
 async function skipFace() {
-  state.faceResult={skipped:true,mental_score:0,cardiovascular_score:0,flags:[]};
+
+  state.faceResult = {
+
+    skipped:true,
+
+    mental_score:0,
+
+    cardiovascular_score:0,
+
+    flags:[]
+
+  };
+
+
   await computeAndShowResults();
+
 }
+
+
+/* =========================================================
+   FINAL COMPUTE
+   ========================================================= */
+
+async function computeAndShowResults() {
+
+  goToStep(5);
+
+
+  /* Reaction time */
+
+  if(
+    !state.rtResult &&
+    state.rtTimes.length >= 3
+  ) {
+
+    const res =
+      await fetch(
+        '/api/reaction-time',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify({
+              times:state.rtTimes
+            })
+        }
+      );
+
+
+    state.rtResult =
+      await res.json();
+
+  }
+
+
+  else if(!state.rtResult) {
+
+    state.rtResult = {
+      score:0,
+      flags:[]
+    };
+
+  }
+
+
+  /* Voice */
+
+  if(
+    !state.voiceResult &&
+    Object.keys(state.voiceFeatures).length > 0
+  ) {
+
+    const res =
+      await fetch(
+        '/api/voice-analysis',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(
+              state.voiceFeatures
+            )
+        }
+      );
+
+
+    state.voiceResult =
+      await res.json();
+
+  }
+
+
+  else if(!state.voiceResult) {
+
+    state.voiceResult = {
+      score:0,
+      flags:[]
+    };
+
+  }
+
+
+  /* Facial data */
+
+  const facialData = {
+
+    mental_score:
+      state.faceResult?.mental_score || 0,
+
+    cardiovascular_score:
+      state.faceResult?.cardiovascular_score || 0,
+
+    flags:
+      state.faceResult?.flags || []
+
+  };
+
+
+  /* Final payload */
+
+  const payload = {
+
+    questionnaire_scores:
+      state.qResult?.scores || {},
+
+    questionnaire_flags:
+      state.qResult?.flags || [],
+
+
+    reaction_time_score:
+      state.rtResult?.score || 0,
+
+    reaction_time_flags:
+      state.rtResult?.flags || [],
+
+
+    voice_score:
+      state.voiceResult?.score || 0,
+
+    voice_flags:
+      state.voiceResult?.flags || [],
+
+
+    facial_scores:
+      facialData,
+
+    facial_data:
+      facialData,
+
+    face_mental_score:
+      facialData.mental_score,
+
+    face_cardio_score:
+      facialData.cardiovascular_score,
+
+    face_flags:
+      facialData.flags
+
+  };
+
+
+  try {
+
+    const res =
+      await fetch(
+        '/api/compute-risk',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(payload)
+        }
+      );
+
+
+    if(!res.ok) {
+
+      throw new Error(
+        'Risk calculation failed.'
+      );
+
+    }
+
+
+    const riskProfile =
+      await res.json();
+
+
+    sessionStorage.setItem(
+      'riskProfile',
+      JSON.stringify(riskProfile)
+    );
+
+
+    if(
+      state.faceResult &&
+      !state.faceResult.skipped
+    ) {
+
+      sessionStorage.setItem(
+        'faceResult',
+        JSON.stringify(
+          state.faceResult
+        )
+      );
+
+    }
+
+
+    window.location.href =
+      '/results';
+
+
+  } catch(e) {
+
+    console.error(e);
+
+    alert(
+      'Could not calculate the risk profile. Please try again.'
+    );
+
+    goToStep(4);
+
+  }
+
+}
+
+
+/* =========================================================
+   STEP NAVIGATION
+   ========================================================= */
+
+function goToStep(n) {
+
+  document
+    .querySelectorAll('.step-panel')
+    .forEach(
+      p => p.classList.remove('active')
+    );
+
+
+  document
+    .getElementById(`step-${n}`)
+    .classList.add('active');
+
+
+  for(let i=1;i<=5;i++) {
+
+    const d =
+      document.getElementById(
+        `dot-${i}`
+      );
+
+
+    d.className =
+      'step-dot' +
+      (
+        i < n
+          ? ' done'
+          : i === n
+            ? ' active'
+            : ''
+      );
+
+  }
+
+
+  state.currentStep = n;
+
+
+  window.scrollTo(
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+renderQuestionnaire();
+
 </script>
+
+
+<!-- face-api.js -->
+
+<script
+  src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"
+></script>
+
 {% endblock %}
