@@ -122,7 +122,7 @@ function renderResults(profile) {
   `;
 
   const grid = document.getElementById('disease-grid');
-  grid.innerHTML = profile.disease_risks.map(d => {
+  grid.innerHTML = profile.results.map(d => {
     const color   = levelColor(d.level);
     const flags = (d.flags || []).map(f =>
       `<div class="flag-item">⚠ ${f.message}</div>`
