@@ -753,15 +753,12 @@ def compute_risk_profile(
     face_flags=None
 ):
     return calculate_risk(
-        questionnaire_scores=questionnaire_scores,
-        questionnaire_flags=questionnaire_flags,
-        reaction_time_score=reaction_time_score,
-        reaction_time_flags=reaction_time_flags,
-        voice_score=voice_score,
-        voice_flags=voice_flags,
-        facial_scores=facial_scores,
-        facial_data=facial_data,
-        face_mental_score=face_mental_score,
-        face_cardio_score=face_cardio_score,
-        face_flags=face_flags
+    questionnaire_scores=questionnaire_scores,
+    questionnaire_flags=questionnaire_flags,
+    reaction_time_score=reaction_time_score,
+    reaction_time_flags=reaction_time_flags,
+    voice_score=voice_score,
+    voice_flags=voice_flags,
+    facial_scores=facial_scores,
+    facial_data=facial_data
     )
