@@ -143,12 +143,12 @@ function renderResults(profile) {
     }).join('');
 
     return `
-    <div class="card disease-card level-${d.level}">
+    <div class="card disease-card level-${String(d.level).toLowerCase()}">
       <div class="level-bar" style="width:${d.score}%"></div>
       <div class="score-row">
         <div>
-          <div class="disease-label">${d.label}</div>
-          <div class="disease-desc">${d.description}</div>
+          <div class="disease-label">${d.name}</div>
+          <div class="disease-desc">${d.key}</div>
         </div>
         <div style="text-align:right">
           <div class="score-val" style="color:${color}">${d.score}</div>
@@ -167,7 +167,7 @@ ${contributors ? `
   </div>
 ` : ''}
 
-<div class="rec">💡 ${d.recommendation}</div>
+<div class="rec">💡 ${profile.recommendations.join(' ')}</div>
     </div>`;
   }).join('');
 
