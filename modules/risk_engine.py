@@ -11,7 +11,7 @@ It is NOT a medical diagnosis system.
 # ---------------------------------------------------------
 # Risk levels
 # ---------------------------------------------------------
-
+SCORE_SENSITIVITY = 0.70
 def _risk_level(score):
     if score >= 70:
         return "High"
@@ -487,9 +487,9 @@ def calculate_risk(
 
             else:
 
-                final_score = (
-                    sum(component_scores) /
-                    len(component_scores)
+                final_score = round(
+                    min(max(final_score * SCORE_SENSITIVITY, 0), 100),
+                    2
                 )
 
         else:
