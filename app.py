@@ -263,7 +263,7 @@ def api_compute_risk():
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    result = compute_risk_profile(data)
+    result = compute_risk_profile(**data)
 
     # Save screening to logged-in user's history
     save_screening(
